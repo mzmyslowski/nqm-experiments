@@ -1,0 +1,209 @@
+[
+  {
+    "experiment_name": "32_1e-1",
+    "training_hyperparameters": {
+      "loss_name": "CrossEntropy",
+      "epochs": 100,
+      "compute_training_stats_step": 1,
+      "training_batch_size": 32,
+      "predict_batch_size": 512,
+      "random_seed": 777,
+      "eval_metrics_path": "./32_1e-1/eval_metrics.csv"
+    },
+    "optimiser_hyperparameters": {
+      "optimiser_name": "SGD",
+      "lr": 0.1,
+      "l2_rate": 0
+    },
+    "model_hyperparameters": {
+      "model_name": "SimpleCNN"
+    },
+    "metrics_hyperparameters": {
+      "metrics_names": {}
+    }
+  },
+    {
+    "experiment_name": "32_1e-10",
+    "training_hyperparameters": {
+      "loss_name": "CrossEntropy",
+      "epochs": 100,
+      "compute_training_stats_step": 1,
+      "training_batch_size": 32,
+      "predict_batch_size": 512,
+      "random_seed": 777,
+      "eval_metrics_path": "./32_1e-10/eval_metrics.csv"
+    },
+    "optimiser_hyperparameters": {
+      "optimiser_name": "SGD",
+      "lr": 0.01,
+      "l2_rate": 0
+    },
+    "model_hyperparameters": {
+      "model_name": "SimpleCNN"
+    },
+    "metrics_hyperparameters": {
+      "metrics_names": {}
+    }
+  },
+   {
+    "experiment_name": "32_1e-100",
+    "training_hyperparameters": {
+      "loss_name": "CrossEntropy",
+      "epochs": 100,
+      "compute_training_stats_step": 1,
+      "training_batch_size": 32,
+      "predict_batch_size": 512,
+      "random_seed": 777,
+      "eval_metrics_path": "./32_1e-100/eval_metrics.csv"
+    },
+    "optimiser_hyperparameters": {
+      "optimiser_name": "SGD",
+      "lr": 0.001,
+      "l2_rate": 0
+    },
+    "model_hyperparameters": {
+      "model_name": "SimpleCNN"
+    },
+    "metrics_hyperparameters": {
+      "metrics_names": {}
+    }
+  },
+    {
+    "experiment_name": "128_1e-1",
+    "training_hyperparameters": {
+      "loss_name": "CrossEntropy",
+      "epochs": 100,
+      "compute_training_stats_step": 1,
+      "training_batch_size": 128,
+      "predict_batch_size": 512,
+      "random_seed": 777,
+      "eval_metrics_path": "./128_1e-1/eval_metrics.csv"
+    },
+    "optimiser_hyperparameters": {
+      "optimiser_name": "SGD",
+      "lr": 0.1,
+      "l2_rate": 0
+    },
+    "model_hyperparameters": {
+      "model_name": "SimpleCNN"
+    },
+    "metrics_hyperparameters": {
+      "metrics_names": {}
+    }
+  },
+    {
+    "experiment_name": "128_1e-10",
+    "training_hyperparameters": {
+      "loss_name": "CrossEntropy",
+      "epochs": 100,
+      "compute_training_stats_step": 1,
+      "training_batch_size": 128,
+      "predict_batch_size": 512,
+      "random_seed": 777,
+      "eval_metrics_path": "./128_1e-10/eval_metrics.csv"
+    },
+    "optimiser_hyperparameters": {
+      "optimiser_name": "SGD",
+      "lr": 0.01,
+      "l2_rate": 0
+    },
+    "model_hyperparameters": {
+      "model_name": "SimpleCNN"
+    },
+    "metrics_hyperparameters": {
+      "metrics_names": {}
+    }
+  },
+   {
+    "experiment_name": "128_1e-100",
+    "training_hyperparameters": {
+      "loss_name": "CrossEntropy",
+      "epochs": 100,
+      "compute_training_stats_step": 1,
+      "training_batch_size": 128,
+      "predict_batch_size": 512,
+      "random_seed": 777,
+      "eval_metrics_path": "./128_1e-100/eval_metrics.csv"
+    },
+    "optimiser_hyperparameters": {
+      "optimiser_name": "SGD",
+      "lr": 0.001,
+      "l2_rate": 0
+    },
+    "model_hyperparameters": {
+      "model_name": "SimpleCNN"
+    },
+    "metrics_hyperparameters": {
+      "metrics_names": {}
+    }
+  },
+      {
+    "experiment_name": "512_1e-1",
+    "training_hyperparameters": {
+      "loss_name": "CrossEntropy",
+      "epochs": 100,
+      "compute_training_stats_step": 1,
+      "training_batch_size": 512,
+      "predict_batch_size": 512,
+      "random_seed": 777,
+      "eval_metrics_path": "./512_1e-1/eval_metrics.csv"
+    },
+    "optimiser_hyperparameters": {
+      "optimiser_name": "SGD",
+      "lr": 0.1,
+      "l2_rate": 0
+    },
+    "model_hyperparameters": {
+      "model_name": "SimpleCNN"
+    },
+    "metrics_hyperparameters": {
+      "metrics_names": {}
+    }
+  },
+    {
+    "experiment_name": "512_1e-10",
+    "training_hyperparameters": {
+      "loss_name": "CrossEntropy",
+      "epochs": 100,
+      "compute_training_stats_step": 1,
+      "training_batch_size": 512,
+      "predict_batch_size": 512,
+      "random_seed": 777,
+      "eval_metrics_path": "./512_1e-10/eval_metrics.csv"
+    },
+    "optimiser_hyperparameters": {
+      "optimiser_name": "SGD",
+      "lr": 0.01,
+      "l2_rate": 0
+    },
+    "model_hyperparameters": {
+      "model_name": "SimpleCNN"
+    },
+    "metrics_hyperparameters": {
+      "metrics_names": {}
+    }
+  },
+   {
+    "experiment_name": "512_1e-100",
+    "training_hyperparameters": {
+      "loss_name": "CrossEntropy",
+      "epochs": 100,
+      "compute_training_stats_step": 1,
+      "training_batch_size": 512,
+      "predict_batch_size": 512,
+      "random_seed": 777,
+      "eval_metrics_path": "./512_1e-100/eval_metrics.csv"
+    },
+    "optimiser_hyperparameters": {
+      "optimiser_name": "SGD",
+      "lr": 0.001,
+      "l2_rate": 0
+    },
+    "model_hyperparameters": {
+      "model_name": "SimpleCNN"
+    },
+    "metrics_hyperparameters": {
+      "metrics_names": {}
+    }
+  }
+]
