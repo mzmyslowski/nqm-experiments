@@ -21,6 +21,9 @@ class RNNTrainingExperimentPyTorch:
     TEST_NAME = 'TEST'
     PREDS_NAME = 'Y_PREDS'
     Y_NAME = 'Y'
+    BATCH_LOSS = 'BATCH_LOSS'
+    BATCH_TAG = 'batch'
+    EPOCH_TAG = 'epoch'
 
     def __init__(
             self,
@@ -37,6 +40,9 @@ class RNNTrainingExperimentPyTorch:
             save_best_preds_by: Optional[str] = None,
             best_preds_path: Optional[str] = None,
             eval_metrics_path: Optional[str] = None,
+            batch_metrics_path: Optional[str] = None,
+            target_metric_value: Optional[float] = None,
+            target_metric_name: Optional[str] = None,
     ):
         self.loss_name = loss_name
         self.epochs = epochs
@@ -53,6 +59,9 @@ class RNNTrainingExperimentPyTorch:
         self.save_best_preds_by = save_best_preds_by
         self.best_preds_path = best_preds_path
         self.eval_metrics_path = eval_metrics_path
+        assert (target_metric_value is None) == (target_metric_name is None)
+        self.target_metric_value = target_metric_value
+        self.target_metric_name = target_metric_name
 
     def run(self):
         self.dataset_generator.init_dataset()
@@ -85,11 +94,23 @@ class RNNTrainingExperimentPyTorch:
 
                 self._update_weights(loss=loss)
 
+                eval_metrics = {self.BATCH_LOSS: loss.item()}
+
                 if self._do_compute_training_stats(batch_index=batch_index):
-                    eval_metrics = self._compute_training_stats(epoch_index=epoch_index, batch_index=batch_index)
+                    eval_metrics, train_preds = self._evaluate_metrics(eval_metrics=eval_metrics,
+                                                                       prefix_name=self.TRAIN_NAME)
+                    # if self.best_preds_path is not None:
+                    #     self._save_best_preds(preds=preds, eval_metrics=eval_metrics)
+                    self._print_metrics(eval_metrics=eval_metrics, epoch_index=epoch_index, batch_index=batch_index)
+                    if self.eval_metrics_path is not None:
+                        self._save_evaluated_metrics(eval_metrics=eval_metrics, epoch_index=epoch_index,
+                                                     batch_index=batch_index)
+                    self._save_best_model(eval_metrics=eval_metrics)
+                    if self._do_stop_training(eval_metrics=eval_metrics):
+                        break
 
             print('Epoch time', time.time() - start)
-            if eval_metrics['TRAIN_LOSS'] <= 0.01:
+            if self._do_stop_training(eval_metrics=eval_metrics):
                 break
 
     @staticmethod
@@ -104,20 +125,17 @@ class RNNTrainingExperimentPyTorch:
     def _do_compute_training_stats(self, batch_index):
         return batch_index % self.compute_training_stats_step == 0
 
-    def _compute_training_stats(self, epoch_index, batch_index):
-        eval_metrics, train_preds = self._evaluate_metrics(prefix_name=self.TRAIN_NAME)
+    def _compute_training_stats(self, eval_metrics, epoch_index, batch_index):
         # if self.best_preds_path is not None:
         #     self._save_best_preds(preds=preds, eval_metrics=eval_metrics)
         self._print_metrics(eval_metrics=eval_metrics, epoch_index=epoch_index, batch_index=batch_index)
         if self.eval_metrics_path is not None:
-            self._save_evaluated_metrics(eval_metrics=eval_metrics)
+            self._save_evaluated_metrics(eval_metrics=eval_metrics, epoch_index=epoch_index, batch_index=batch_index)
         self._save_best_model(eval_metrics=eval_metrics)
         return eval_metrics
 
-    def _evaluate_metrics(self, prefix_name):
+    def _evaluate_metrics(self, eval_metrics, prefix_name):
         self._prepare_model_for_testing()
-
-        eval_metrics = {}
 
         y_pred, y_true = self._get_all_preds_batchwise()
 
@@ -156,8 +174,10 @@ class RNNTrainingExperimentPyTorch:
             print(printing_index, metric_name, metric_value)
         print('\n')
 
-    def _save_evaluated_metrics(self, eval_metrics):
+    def _save_evaluated_metrics(self, eval_metrics, epoch_index, batch_index):
         df = pd.DataFrame(eval_metrics, index=[0])
+        df[self.EPOCH_TAG] = epoch_index
+        df[self.BATCH_TAG] = batch_index
         if not os.path.exists(self.eval_metrics_path):
             df.to_csv(self.eval_metrics_path)
         else:
@@ -189,3 +209,6 @@ class RNNTrainingExperimentPyTorch:
         y_pred_tensor = torch.cat(y_pred)
         y_true_tensor = torch.cat(y_true)
         return y_pred_tensor, y_true_tensor
+
+    def _do_stop_training(self, eval_metrics):
+        return eval_metrics[self.target_metric_name] <= self.target_metric_value

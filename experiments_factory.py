@@ -11,6 +11,7 @@ import rnn_training_experiments
 
 EXPERIMENT_FACTORY_PATH = './experiments_factory.json'
 
+DATASET_HYPERPARAMETERS = 'dataset_hyperparameters'
 EXPERIMENT_NAME = 'experiment_name'
 METRICS_HYPERPARAMETERS = 'metrics_hyperparameters'
 MODEL_HYPERPARAMETERS = 'model_hyperparameters'
@@ -60,7 +61,10 @@ def perform_experiment(experiment_dict_):
 
 
 def train_model(experiment_dict_: Dict):
-    dataset_generator = datasets_loading_factory.DatasetGeneratorPyTorch()
+    dataset_generator = datasets_loading_factory.DatasetGeneratorPyTorch(
+        **experiment_dict_[DATASET_HYPERPARAMETERS],
+        train=True
+    )
     model_factory_ = models_factory.ModelsFactory(**experiment_dict_[MODEL_HYPERPARAMETERS])
     optimiser_factory = optimisation_factory.OptimisersFactoryPyTorch(**experiment_dict_[OPTIMISER_HYPERPARAMETERS])
     metrics_factory_ = metrics_factory.MetricsFactory(**experiment_dict_[METRICS_HYPERPARAMETERS])
