@@ -211,4 +211,7 @@ class RNNTrainingExperimentPyTorch:
         return y_pred_tensor, y_true_tensor
 
     def _do_stop_training(self, eval_metrics):
-        return eval_metrics[self.target_metric_name] <= self.target_metric_value
+        return (
+                eval_metrics.get(self.target_metric_name) is not None and
+                eval_metrics[self.target_metric_name] <= self.target_metric_value
+        )
