@@ -7,7 +7,7 @@
     "training_hyperparameters": {
       "loss_name": "CrossEntropy",
       "epochs": 100,
-      "compute_training_stats_step": 10,
+      "compute_training_stats_step": 150,
       "training_batch_size": 32,
       "predict_batch_size": 2000,
       "random_seed": 777,
@@ -35,11 +35,11 @@
     "training_hyperparameters": {
       "loss_name": "CrossEntropy",
       "epochs": 100,
-      "compute_training_stats_step": 10,
+      "compute_training_stats_step": 38,
       "training_batch_size": 128,
       "predict_batch_size": 2000,
       "random_seed": 777,
-      "eval_metrics_path": "./32_1e-1/eval_metrics.csv",
+      "eval_metrics_path": "./128_1e-1/eval_metrics.csv",
       "target_metric_name": "TRAIN_LOSS",
       "target_metric_value": 0.01
     },
@@ -67,7 +67,7 @@
       "training_batch_size": 512,
       "predict_batch_size": 2000,
       "random_seed": 777,
-      "eval_metrics_path": "./32_1e-1/eval_metrics.csv",
+      "eval_metrics_path": "./512_1e-1/eval_metrics.csv",
       "target_metric_name": "TRAIN_LOSS",
       "target_metric_value": 0.01
     },
@@ -91,11 +91,11 @@
     "training_hyperparameters": {
       "loss_name": "CrossEntropy",
       "epochs": 100,
-      "compute_training_stats_step": 10,
+      "compute_training_stats_step": 150,
       "training_batch_size": 32,
       "predict_batch_size": 2000,
       "random_seed": 777,
-      "eval_metrics_path": "./32_1e-1/eval_metrics.csv",
+      "eval_metrics_path": "./32_1e-10/eval_metrics.csv",
       "target_metric_name": "TRAIN_LOSS",
       "target_metric_value": 0.01
     },
@@ -119,11 +119,11 @@
     "training_hyperparameters": {
       "loss_name": "CrossEntropy",
       "epochs": 100,
-      "compute_training_stats_step": 10,
+      "compute_training_stats_step": 38,
       "training_batch_size": 128,
       "predict_batch_size": 2000,
       "random_seed": 777,
-      "eval_metrics_path": "./32_1e-1/eval_metrics.csv",
+      "eval_metrics_path": "./128_1e-10/eval_metrics.csv",
       "target_metric_name": "TRAIN_LOSS",
       "target_metric_value": 0.01
     },
@@ -151,7 +151,7 @@
       "training_batch_size": 512,
       "predict_batch_size": 2000,
       "random_seed": 777,
-      "eval_metrics_path": "./32_1e-1/eval_metrics.csv",
+      "eval_metrics_path": "./512_1e-10/eval_metrics.csv",
       "target_metric_name": "TRAIN_LOSS",
       "target_metric_value": 0.01
     },
@@ -168,18 +168,18 @@
     }
   },
     {
-    "experiment_name": "32_1e-1",
+    "experiment_name": "32_1e-100",
     "dataset_hyperparameters": {
       "dataset_name": "CIFAR10"
     },
     "training_hyperparameters": {
       "loss_name": "CrossEntropy",
       "epochs": 100,
-      "compute_training_stats_step": 10,
+      "compute_training_stats_step": 150,
       "training_batch_size": 32,
       "predict_batch_size": 2000,
       "random_seed": 777,
-      "eval_metrics_path": "./32_1e-1/eval_metrics.csv",
+      "eval_metrics_path": "./32_1e-100/eval_metrics.csv",
       "target_metric_name": "TRAIN_LOSS",
       "target_metric_value": 0.01
     },
@@ -196,18 +196,18 @@
     }
   },
     {
-    "experiment_name": "128_1e-1",
+    "experiment_name": "128_1e-100",
     "dataset_hyperparameters": {
       "dataset_name": "CIFAR10"
     },
     "training_hyperparameters": {
       "loss_name": "CrossEntropy",
       "epochs": 100,
-      "compute_training_stats_step": 10,
+      "compute_training_stats_step": 38,
       "training_batch_size": 128,
       "predict_batch_size": 2000,
       "random_seed": 777,
-      "eval_metrics_path": "./32_1e-1/eval_metrics.csv",
+      "eval_metrics_path": "./128_1e-100/eval_metrics.csv",
       "target_metric_name": "TRAIN_LOSS",
       "target_metric_value": 0.01
     },
@@ -235,7 +235,7 @@
       "training_batch_size": 512,
       "predict_batch_size": 2000,
       "random_seed": 777,
-      "eval_metrics_path": "./32_1e-1/eval_metrics.csv",
+      "eval_metrics_path": "./512_1e-100/eval_metrics.csv",
       "target_metric_name": "TRAIN_LOSS",
       "target_metric_value": 0.01
     },
