@@ -7,7 +7,7 @@ import torch.nn.functional as F
 
 
 class KMatrixFactory:
-    def __init__(self, dataset_generator, batch_size, L=100, center=True):
+    def __init__(self, dataset_generator, batch_size, L, center=True):
         self.dataset_generator = dataset_generator
         self.batch_size = batch_size
         self.L = L

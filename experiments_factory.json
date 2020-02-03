@@ -1,6 +1,6 @@
 [
   {
-    "experiment_name": "32_1e-1",
+    "experiment_name": "32_1e-1_KH",
     "dataset_hyperparameters": {
       "dataset_name": "CIFAR10"
     },
@@ -8,10 +8,10 @@
       "loss_name": "CrossEntropy",
       "epochs": 100,
       "compute_training_stats_step": 2000,
-      "training_batch_size": 512,
+      "training_batch_size": 32,
       "predict_batch_size": 2000,
       "random_seed": 777,
-      "eval_metrics_path": "./32_1e-1/eval_metrics.csv",
+      "eval_metrics_path": "./32_1e-1_KH/eval_metrics.csv",
       "target_metric_name": "TRAIN_LOSS",
       "target_metric_value": 0.01
     },
@@ -27,19 +27,19 @@
       "metrics_names": {}
     },
     "k_matrix_hyperparameters": {
-      "batch_size": 2000,
-      "L": 100,
+      "batch_size": 32,
+      "L": 25,
       "center": true
     },
     "hessian_hyperparameters": {
       "k": 5,
       "batch_size": 2000,
-      "sample_percentage": 0.1,
+      "sample_percentage": 0.05,
       "tolerance": 1e-2
     }
   },
     {
-    "experiment_name": "128_1e-1",
+    "experiment_name": "128_1e-1_KH",
     "dataset_hyperparameters": {
       "dataset_name": "CIFAR10"
     },
@@ -50,7 +50,7 @@
       "training_batch_size": 128,
       "predict_batch_size": 2000,
       "random_seed": 777,
-      "eval_metrics_path": "./128_1e-1/eval_metrics.csv",
+      "eval_metrics_path": "./128_1e-1_KH/eval_metrics.csv",
       "target_metric_name": "TRAIN_LOSS",
       "target_metric_value": 0.01
     },
@@ -64,10 +64,21 @@
     },
     "metrics_hyperparameters": {
       "metrics_names": {}
+    },
+      "k_matrix_hyperparameters": {
+      "batch_size": 128,
+      "L": 25,
+      "center": true
+    },
+    "hessian_hyperparameters": {
+      "k": 5,
+      "batch_size": 2000,
+      "sample_percentage": 0.05,
+      "tolerance": 1e-2
     }
   },
     {
-    "experiment_name": "512_1e-1",
+    "experiment_name": "512_1e-1_KH",
     "dataset_hyperparameters": {
       "dataset_name": "CIFAR10"
     },
@@ -78,7 +89,7 @@
       "training_batch_size": 512,
       "predict_batch_size": 2000,
       "random_seed": 777,
-      "eval_metrics_path": "./512_1e-1/eval_metrics.csv",
+      "eval_metrics_path": "./512_1e-1_KH/eval_metrics.csv",
       "target_metric_name": "TRAIN_LOSS",
       "target_metric_value": 0.01
     },
@@ -92,10 +103,21 @@
     },
     "metrics_hyperparameters": {
       "metrics_names": {}
+    },
+      "k_matrix_hyperparameters": {
+      "batch_size": 512,
+      "L": 25,
+      "center": true
+    },
+    "hessian_hyperparameters": {
+      "k": 5,
+      "batch_size": 2000,
+      "sample_percentage": 0.05,
+      "tolerance": 1e-2
     }
   },
     {
-    "experiment_name": "32_1e-10",
+    "experiment_name": "32_1e-10_KH",
     "dataset_hyperparameters": {
       "dataset_name": "CIFAR10"
     },
@@ -106,7 +128,7 @@
       "training_batch_size": 32,
       "predict_batch_size": 2000,
       "random_seed": 777,
-      "eval_metrics_path": "./32_1e-10/eval_metrics.csv",
+      "eval_metrics_path": "./32_1e-10_KH/eval_metrics.csv",
       "target_metric_name": "TRAIN_LOSS",
       "target_metric_value": 0.01
     },
@@ -120,10 +142,21 @@
     },
     "metrics_hyperparameters": {
       "metrics_names": {}
+    },
+      "k_matrix_hyperparameters": {
+      "batch_size": 32,
+      "L": 25,
+      "center": true
+    },
+    "hessian_hyperparameters": {
+      "k": 5,
+      "batch_size": 2000,
+      "sample_percentage": 0.05,
+      "tolerance": 1e-2
     }
   },
     {
-    "experiment_name": "128_1e-10",
+    "experiment_name": "128_1e-10_KH",
     "dataset_hyperparameters": {
       "dataset_name": "CIFAR10"
     },
@@ -134,7 +167,7 @@
       "training_batch_size": 128,
       "predict_batch_size": 2000,
       "random_seed": 777,
-      "eval_metrics_path": "./128_1e-10/eval_metrics.csv",
+      "eval_metrics_path": "./128_1e-10_KH/eval_metrics.csv",
       "target_metric_name": "TRAIN_LOSS",
       "target_metric_value": 0.01
     },
@@ -148,10 +181,21 @@
     },
     "metrics_hyperparameters": {
       "metrics_names": {}
+    },
+      "k_matrix_hyperparameters": {
+      "batch_size": 128,
+      "L": 25,
+      "center": true
+    },
+    "hessian_hyperparameters": {
+      "k": 5,
+      "batch_size": 2000,
+      "sample_percentage": 0.05,
+      "tolerance": 1e-2
     }
   },
     {
-    "experiment_name": "512_1e-10",
+    "experiment_name": "512_1e-10_KH",
     "dataset_hyperparameters": {
       "dataset_name": "CIFAR10"
     },
@@ -162,7 +206,7 @@
       "training_batch_size": 512,
       "predict_batch_size": 2000,
       "random_seed": 777,
-      "eval_metrics_path": "./512_1e-10/eval_metrics.csv",
+      "eval_metrics_path": "./512_1e-10_KH/eval_metrics.csv",
       "target_metric_name": "TRAIN_LOSS",
       "target_metric_value": 0.01
     },
@@ -176,10 +220,21 @@
     },
     "metrics_hyperparameters": {
       "metrics_names": {}
+    },
+      "k_matrix_hyperparameters": {
+      "batch_size": 512,
+      "L": 25,
+      "center": true
+    },
+    "hessian_hyperparameters": {
+      "k": 5,
+      "batch_size": 2000,
+      "sample_percentage": 0.05,
+      "tolerance": 1e-2
     }
   },
     {
-    "experiment_name": "32_1e-100",
+    "experiment_name": "32_1e-100_KH",
     "dataset_hyperparameters": {
       "dataset_name": "CIFAR10"
     },
@@ -190,7 +245,7 @@
       "training_batch_size": 32,
       "predict_batch_size": 2000,
       "random_seed": 777,
-      "eval_metrics_path": "./32_1e-100/eval_metrics.csv",
+      "eval_metrics_path": "./32_1e-100_KH/eval_metrics.csv",
       "target_metric_name": "TRAIN_LOSS",
       "target_metric_value": 0.01
     },
@@ -204,10 +259,21 @@
     },
     "metrics_hyperparameters": {
       "metrics_names": {}
+    },
+      "k_matrix_hyperparameters": {
+      "batch_size": 32,
+      "L": 25,
+      "center": true
+    },
+    "hessian_hyperparameters": {
+      "k": 5,
+      "batch_size": 2000,
+      "sample_percentage": 0.05,
+      "tolerance": 1e-2
     }
   },
     {
-    "experiment_name": "128_1e-100",
+    "experiment_name": "128_1e-100_KH",
     "dataset_hyperparameters": {
       "dataset_name": "CIFAR10"
     },
@@ -218,7 +284,7 @@
       "training_batch_size": 128,
       "predict_batch_size": 2000,
       "random_seed": 777,
-      "eval_metrics_path": "./128_1e-100/eval_metrics.csv",
+      "eval_metrics_path": "./128_1e-100_KH/eval_metrics.csv",
       "target_metric_name": "TRAIN_LOSS",
       "target_metric_value": 0.01
     },
@@ -232,10 +298,21 @@
     },
     "metrics_hyperparameters": {
       "metrics_names": {}
+    },
+      "k_matrix_hyperparameters": {
+      "batch_size": 128,
+      "L": 25,
+      "center": true
+    },
+    "hessian_hyperparameters": {
+      "k": 5,
+      "batch_size": 2000,
+      "sample_percentage": 0.05,
+      "tolerance": 1e-2
     }
   },
     {
-    "experiment_name": "512_1e-100",
+    "experiment_name": "512_1e-100_KH",
     "dataset_hyperparameters": {
       "dataset_name": "CIFAR10"
     },
@@ -246,7 +323,7 @@
       "training_batch_size": 512,
       "predict_batch_size": 2000,
       "random_seed": 777,
-      "eval_metrics_path": "./512_1e-100/eval_metrics.csv",
+      "eval_metrics_path": "./512_1e-100_KH/eval_metrics.csv",
       "target_metric_name": "TRAIN_LOSS",
       "target_metric_value": 0.01
     },
@@ -260,6 +337,17 @@
     },
     "metrics_hyperparameters": {
       "metrics_names": {}
+    },
+      "k_matrix_hyperparameters": {
+      "batch_size": 512,
+      "L": 25,
+      "center": true
+    },
+    "hessian_hyperparameters": {
+      "k": 5,
+      "batch_size": 2000,
+      "sample_percentage": 0.05,
+      "tolerance": 1e-2
     }
   }
 ]
