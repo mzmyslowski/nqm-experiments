@@ -4,6 +4,7 @@ import shutil
 from typing import Dict, List
 
 import datasets_loading_factory
+import derivatives_factory
 import metrics_factory
 import models_factory
 import optimisation_factory
@@ -13,6 +14,8 @@ EXPERIMENT_FACTORY_PATH = './experiments_factory.json'
 
 DATASET_HYPERPARAMETERS = 'dataset_hyperparameters'
 EXPERIMENT_NAME = 'experiment_name'
+K_HYPERPARAMETERS = 'k_matrix_hyperparameters'
+H_HYPERPARAMETERS = 'hessian_hyperparameters'
 METRICS_HYPERPARAMETERS = 'metrics_hyperparameters'
 MODEL_HYPERPARAMETERS = 'model_hyperparameters'
 OPTIMISER_HYPERPARAMETERS = 'optimiser_hyperparameters'
@@ -65,6 +68,12 @@ def train_model(experiment_dict_: Dict):
         **experiment_dict_[DATASET_HYPERPARAMETERS],
         train=True
     )
+    k_matrix_factory = derivatives_factory.KMatrixFactory(
+        dataset_generator=dataset_generator, **experiment_dict[K_HYPERPARAMETERS]
+    )
+    hessian_factory = derivatives_factory.HessianFactory(
+        dataset_generator=dataset_generator, **experiment_dict[H_HYPERPARAMETERS]
+    )
     model_factory_ = models_factory.ModelsFactory(**experiment_dict_[MODEL_HYPERPARAMETERS])
     optimiser_factory = optimisation_factory.OptimisersFactoryPyTorch(**experiment_dict_[OPTIMISER_HYPERPARAMETERS])
     metrics_factory_ = metrics_factory.MetricsFactory(**experiment_dict_[METRICS_HYPERPARAMETERS])
@@ -74,6 +83,8 @@ def train_model(experiment_dict_: Dict):
         models_factory=model_factory_,
         optimisers_factory=optimiser_factory,
         metrics_factory=metrics_factory_,
+        k_matrix_factory=k_matrix_factory,
+        hessian_factory=hessian_factory,
     )
     training_experiment.run()
 

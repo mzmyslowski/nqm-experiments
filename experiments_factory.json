@@ -8,7 +8,7 @@
       "loss_name": "CrossEntropy",
       "epochs": 100,
       "compute_training_stats_step": 2000,
-      "training_batch_size": 32,
+      "training_batch_size": 512,
       "predict_batch_size": 2000,
       "random_seed": 777,
       "eval_metrics_path": "./32_1e-1/eval_metrics.csv",
@@ -25,6 +25,17 @@
     },
     "metrics_hyperparameters": {
       "metrics_names": {}
+    },
+    "k_matrix_hyperparameters": {
+      "batch_size": 2000,
+      "L": 100,
+      "center": true
+    },
+    "hessian_hyperparameters": {
+      "k": 5,
+      "batch_size": 2000,
+      "sample_percentage": 0.1,
+      "tolerance": 1e-2
     }
   },
     {

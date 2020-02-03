@@ -6,6 +6,7 @@ import numpy as np
 import pandas as pd
 import torch
 
+import derivatives_factory
 import datasets_loading_factory
 import metrics_factory
 import models_factory
@@ -24,6 +25,8 @@ class RNNTrainingExperimentPyTorch:
     BATCH_LOSS = 'BATCH_LOSS'
     BATCH_TAG = 'batch'
     EPOCH_TAG = 'epoch'
+    K_EIGENS_TAG = 'K_EIGENS'
+    H_EIGENS_TAG = 'H_EIGENS'
 
     def __init__(
             self,
@@ -37,6 +40,8 @@ class RNNTrainingExperimentPyTorch:
             models_factory: models_factory.ModelsFactory,
             optimisers_factory: optimisation_factory.OptimisersFactory,
             metrics_factory: metrics_factory.MetricsFactory,
+            k_matrix_factory: derivatives_factory.KMatrixFactory,
+            hessian_factory: derivatives_factory.HessianFactory,
             save_best_preds_by: Optional[str] = None,
             best_preds_path: Optional[str] = None,
             eval_metrics_path: Optional[str] = None,
@@ -54,6 +59,8 @@ class RNNTrainingExperimentPyTorch:
         self.models_factory = models_factory
         self.optimisers_factory = optimisers_factory
         self.metrics_factory = metrics_factory
+        self.hessian_factory = hessian_factory
+        self.k_matrix_factory = k_matrix_factory
         self.loss_func = None
         self.best_metric_value = None
         self.save_best_preds_by = save_best_preds_by
@@ -140,10 +147,18 @@ class RNNTrainingExperimentPyTorch:
         y_pred, y_true = self._get_all_preds_batchwise()
 
         eval_metrics['{}_{}'.format(prefix_name, self.LOSS_NAME)] = self.loss_func(y_pred, y_true).item()
+        print('Going to compute K')
+        k_eigens = self.k_matrix_factory.compute_eigens(model=self.models_factory.model, criterion=self.loss_func)
+        print('Going to compute H')
+        h_eigens = self.hessian_factory.compute_eigens(model=self.models_factory.model, criterion=self.loss_func)
+
+        eval_metrics[self.K_EIGENS_TAG] = k_eigens
+        eval_metrics[self.K_EIGENS_TAG] = h_eigens
 
         preds_dict = {
             '{}_{}'.format(prefix_name, self.PREDS_NAME): y_pred,
             '{}_{}'.format(prefix_name, self.Y_NAME): y_true,
+
         }
 
         # eval_metrics = self.metrics_factory.evaluate_metrics(
