@@ -102,19 +102,20 @@ class HessianFactory:
         return eigenvalues, eigenvectors
 
     def _get_Hv_function(self, model, data_loader, criterion):
+        model_parameters = list(model.parameters())
         def Hv(v):
             vectors = self._divide_flattened_vector_between_parameters(
                 flattened_vector=v,
-                model_parameters=model.parameters()
+                model_parameters=model_parameters
             )
             self._evaluate_hessian_vector_product(
                 vectors=vectors,
                 model=model,
                 data_loader=data_loader,
                 criterion=criterion,
-                model_parameters=model.parameters()
+                model_parameters=model_parameters
             )
-            result = self._extract_hessian_vector_product_to_vector(model_parameters=model.parameters())
+            result = self._extract_hessian_vector_product_to_vector(model_parameters=model_parameters)
             return result
         return Hv
 
