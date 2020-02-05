@@ -1,3 +1,4 @@
+import time
 from typing import Callable, List, Optional, Union
 
 import numpy as np
@@ -96,9 +97,6 @@ class HessianFactory:
         )
         Hv_linear_operator = scipy.sparse.linalg.LinearOperator(shape=(N, N), matvec=Hv)
         eigenvalues, eigenvectors = scipy.sparse.linalg.eigsh(Hv_linear_operator, k=k, tol=tolerance)
-        eigenvalues, eigenvectors = torch.from_numpy(eigenvalues), torch.from_numpy(eigenvectors)
-        if do_cuda():
-            eigenvalues, eigenvectors = eigenvalues.cuda(), eigenvectors.cuda()
         return eigenvalues, eigenvectors
 
     def _get_Hv_function(self, model, data_loader, criterion):
@@ -171,7 +169,7 @@ class HessianFactory:
         return concatenated_flattened_gradients
 
     def _normalize_eigenvalues(self, eigenvalues, sample_len, batch_size):
-        return eigenvalues * batch_size / sample_len
+        return eigenvalues * max(batch_size / sample_len, 1)
 
 
 def do_cuda():
