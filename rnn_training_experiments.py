@@ -144,16 +144,17 @@ class RNNTrainingExperimentPyTorch:
     def _evaluate_metrics(self, eval_metrics, prefix_name):
         self._prepare_model_for_testing()
 
+        print('Computing predictions')
         y_pred, y_true = self._get_all_preds_batchwise()
 
         eval_metrics['{}_{}'.format(prefix_name, self.LOSS_NAME)] = self.loss_func(y_pred, y_true).item()
-        print('Going to compute K')
+        print('Computing K')
         k_eigens = self.k_matrix_factory.compute_eigens(model=self.models_factory.model, criterion=self.loss_func)
-        print('Going to compute H')
+        print('Computing H')
         h_eigens = self.hessian_factory.compute_eigens(model=self.models_factory.model, criterion=self.loss_func)
 
         eval_metrics[self.K_EIGENS_TAG] = k_eigens
-        eval_metrics[self.K_EIGENS_TAG] = h_eigens
+        eval_metrics[self.H_EIGENS_TAG] = h_eigens
 
         preds_dict = {
             '{}_{}'.format(prefix_name, self.PREDS_NAME): y_pred,
@@ -190,14 +191,15 @@ class RNNTrainingExperimentPyTorch:
         print('\n')
 
     def _save_evaluated_metrics(self, eval_metrics, epoch_index, batch_index):
-        df = pd.DataFrame(eval_metrics, index=[0])
-        df[self.EPOCH_TAG] = epoch_index
-        df[self.BATCH_TAG] = batch_index
-        if not os.path.exists(self.eval_metrics_path):
-            df.to_csv(self.eval_metrics_path)
-        else:
-            with open(self.eval_metrics_path, 'a') as f:
-                df.to_csv(f, header=False)
+        np.save(self.eval_metrics_path.format(epoch_index, batch_index), eval_metrics)
+        # df = pd.DataFrame(eval_metrics, index=[0])
+        # df[self.EPOCH_TAG] = epoch_index
+        # df[self.BATCH_TAG] = batch_index
+        # if not os.path.exists(self.eval_metrics_path):
+        #     df.to_csv(self.eval_metrics_path)
+        # else:
+        #     with open(self.eval_metrics_path, 'a') as f:
+        #         df.to_csv(f, header=False)
 
     def _save_best_model(self, eval_metrics):
         if (
