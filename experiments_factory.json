@@ -6,12 +6,12 @@
     },
     "training_hyperparameters": {
       "loss_name": "CrossEntropy",
-      "epochs": 100,
+      "epochs": 50,
       "compute_training_stats_step": 2000,
       "training_batch_size": 32,
       "predict_batch_size": 2000,
       "random_seed": 777,
-      "eval_metrics_path": "./32_1e-1_KH/eval_metrics.csv",
+      "eval_metrics_path": "./32_1e-1_KH/eval_metrics_{}_{}.npy",
       "target_metric_name": "TRAIN_LOSS",
       "target_metric_value": 0.01
     },
@@ -27,14 +27,14 @@
       "metrics_names": {}
     },
     "k_matrix_hyperparameters": {
-      "batch_size": 32,
+      "batch_size": 128,
       "L": 25,
       "center": true
     },
     "hessian_hyperparameters": {
       "k": 5,
-      "batch_size": 2000,
-      "sample_percentage": 0.05,
+      "batch_size": 2500,
+      "sample_percentage": 0.01,
       "tolerance": 1e-2
     }
   },
@@ -45,12 +45,12 @@
     },
     "training_hyperparameters": {
       "loss_name": "CrossEntropy",
-      "epochs": 100,
+      "epochs": 50,
       "compute_training_stats_step": 2000,
       "training_batch_size": 128,
       "predict_batch_size": 2000,
       "random_seed": 777,
-      "eval_metrics_path": "./128_1e-1_KH/eval_metrics.csv",
+      "eval_metrics_path": "./128_1e-1_KH/eval_metrics_{}_{}.npy",
       "target_metric_name": "TRAIN_LOSS",
       "target_metric_value": 0.01
     },
@@ -72,8 +72,8 @@
     },
     "hessian_hyperparameters": {
       "k": 5,
-      "batch_size": 2000,
-      "sample_percentage": 0.05,
+      "batch_size": 2500,
+      "sample_percentage": 0.01,
       "tolerance": 1e-2
     }
   },
@@ -84,12 +84,12 @@
     },
     "training_hyperparameters": {
       "loss_name": "CrossEntropy",
-      "epochs": 100,
+      "epochs": 50,
       "compute_training_stats_step": 2000,
       "training_batch_size": 512,
       "predict_batch_size": 2000,
       "random_seed": 777,
-      "eval_metrics_path": "./512_1e-1_KH/eval_metrics.csv",
+      "eval_metrics_path": "./512_1e-1_KH/eval_metrics_{}_{}.npy",
       "target_metric_name": "TRAIN_LOSS",
       "target_metric_value": 0.01
     },
@@ -105,14 +105,14 @@
       "metrics_names": {}
     },
       "k_matrix_hyperparameters": {
-      "batch_size": 512,
+      "batch_size": 128,
       "L": 25,
       "center": true
     },
     "hessian_hyperparameters": {
       "k": 5,
-      "batch_size": 2000,
-      "sample_percentage": 0.05,
+      "batch_size": 2500,
+      "sample_percentage": 0.01,
       "tolerance": 1e-2
     }
   },
@@ -123,12 +123,12 @@
     },
     "training_hyperparameters": {
       "loss_name": "CrossEntropy",
-      "epochs": 100,
+      "epochs": 50,
       "compute_training_stats_step": 2000,
       "training_batch_size": 32,
       "predict_batch_size": 2000,
       "random_seed": 777,
-      "eval_metrics_path": "./32_1e-10_KH/eval_metrics.csv",
+      "eval_metrics_path": "./32_1e-10_KH/eval_metrics_{}_{}.npy",
       "target_metric_name": "TRAIN_LOSS",
       "target_metric_value": 0.01
     },
@@ -144,14 +144,14 @@
       "metrics_names": {}
     },
       "k_matrix_hyperparameters": {
-      "batch_size": 32,
+      "batch_size": 128,
       "L": 25,
       "center": true
     },
     "hessian_hyperparameters": {
       "k": 5,
-      "batch_size": 2000,
-      "sample_percentage": 0.05,
+      "batch_size": 2500,
+      "sample_percentage": 0.01,
       "tolerance": 1e-2
     }
   },
@@ -162,12 +162,12 @@
     },
     "training_hyperparameters": {
       "loss_name": "CrossEntropy",
-      "epochs": 100,
+      "epochs": 50,
       "compute_training_stats_step": 2000,
       "training_batch_size": 128,
       "predict_batch_size": 2000,
       "random_seed": 777,
-      "eval_metrics_path": "./128_1e-10_KH/eval_metrics.csv",
+      "eval_metrics_path": "./128_1e-10_KH/eval_metrics_{}_{}.npy",
       "target_metric_name": "TRAIN_LOSS",
       "target_metric_value": 0.01
     },
@@ -189,8 +189,8 @@
     },
     "hessian_hyperparameters": {
       "k": 5,
-      "batch_size": 2000,
-      "sample_percentage": 0.05,
+      "batch_size": 2500,
+      "sample_percentage": 0.01,
       "tolerance": 1e-2
     }
   },
@@ -201,12 +201,12 @@
     },
     "training_hyperparameters": {
       "loss_name": "CrossEntropy",
-      "epochs": 100,
+      "epochs": 50,
       "compute_training_stats_step": 2000,
       "training_batch_size": 512,
       "predict_batch_size": 2000,
       "random_seed": 777,
-      "eval_metrics_path": "./512_1e-10_KH/eval_metrics.csv",
+      "eval_metrics_path": "./512_1e-10_KH/eval_metrics_{}_{}.npy",
       "target_metric_name": "TRAIN_LOSS",
       "target_metric_value": 0.01
     },
@@ -222,14 +222,14 @@
       "metrics_names": {}
     },
       "k_matrix_hyperparameters": {
-      "batch_size": 512,
+      "batch_size": 128,
       "L": 25,
       "center": true
     },
     "hessian_hyperparameters": {
       "k": 5,
-      "batch_size": 2000,
-      "sample_percentage": 0.05,
+      "batch_size": 2500,
+      "sample_percentage": 0.01,
       "tolerance": 1e-2
     }
   },
@@ -240,12 +240,12 @@
     },
     "training_hyperparameters": {
       "loss_name": "CrossEntropy",
-      "epochs": 100,
+      "epochs": 50,
       "compute_training_stats_step": 2000,
       "training_batch_size": 32,
       "predict_batch_size": 2000,
       "random_seed": 777,
-      "eval_metrics_path": "./32_1e-100_KH/eval_metrics.csv",
+      "eval_metrics_path": "./32_1e-100_KH/eval_metrics_{}_{}.npy",
       "target_metric_name": "TRAIN_LOSS",
       "target_metric_value": 0.01
     },
@@ -261,14 +261,14 @@
       "metrics_names": {}
     },
       "k_matrix_hyperparameters": {
-      "batch_size": 32,
+      "batch_size": 128,
       "L": 25,
       "center": true
     },
     "hessian_hyperparameters": {
       "k": 5,
-      "batch_size": 2000,
-      "sample_percentage": 0.05,
+      "batch_size": 2500,
+      "sample_percentage": 0.01,
       "tolerance": 1e-2
     }
   },
@@ -279,12 +279,12 @@
     },
     "training_hyperparameters": {
       "loss_name": "CrossEntropy",
-      "epochs": 100,
+      "epochs": 50,
       "compute_training_stats_step": 2000,
       "training_batch_size": 128,
       "predict_batch_size": 2000,
       "random_seed": 777,
-      "eval_metrics_path": "./128_1e-100_KH/eval_metrics.csv",
+      "eval_metrics_path": "./128_1e-100_KH/eval_metrics_{}_{}.npy",
       "target_metric_name": "TRAIN_LOSS",
       "target_metric_value": 0.01
     },
@@ -307,7 +307,7 @@
     "hessian_hyperparameters": {
       "k": 5,
       "batch_size": 2000,
-      "sample_percentage": 0.05,
+      "sample_percentage": 0.01,
       "tolerance": 1e-2
     }
   },
@@ -318,12 +318,12 @@
     },
     "training_hyperparameters": {
       "loss_name": "CrossEntropy",
-      "epochs": 100,
+      "epochs": 50,
       "compute_training_stats_step": 2000,
       "training_batch_size": 512,
       "predict_batch_size": 2000,
       "random_seed": 777,
-      "eval_metrics_path": "./512_1e-100_KH/eval_metrics.csv",
+      "eval_metrics_path": "./512_1e-100_KH/eval_metrics_{}_{}.npy",
       "target_metric_name": "TRAIN_LOSS",
       "target_metric_value": 0.01
     },
@@ -339,14 +339,14 @@
       "metrics_names": {}
     },
       "k_matrix_hyperparameters": {
-      "batch_size": 512,
+      "batch_size": 128,
       "L": 25,
       "center": true
     },
     "hessian_hyperparameters": {
       "k": 5,
-      "batch_size": 2000,
-      "sample_percentage": 0.05,
+      "batch_size": 2500,
+      "sample_percentage": 0.01,
       "tolerance": 1e-2
     }
   }
