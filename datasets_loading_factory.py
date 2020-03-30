@@ -33,25 +33,28 @@ class DatasetGeneratorPyTorch:
         "CIFAR10": CIFAR10
     }
 
-    def __init__(self, dataset_name: str, train: bool, data_path: str = './data/'):
+    def __init__(self, dataset_name: str, data_path: str = './data/'):
         self.dataset_name = dataset_name
-        self.train = train
         self.data_path = data_path
-        self.dataset = None
+        self.train_dataset = None
+        self.test_dataset = None
         self.dimensionality = None
         self.n_channels = None
         self.n_classes = None
 
     def init_dataset(self):
-        self.dataset = self.DATASETS[self.dataset_name].get_data(train=self.train, data_path=self.data_path)
+        self.train_dataset = self.DATASETS[self.dataset_name].get_data(train=True, data_path=self.data_path)
+        self.test_dataset = self.DATASETS[self.dataset_name].get_data(train=False, data_path=self.data_path)
         self.dimensionality = self.DATASETS[self.dataset_name].DIMENSIONALITY
         self.n_channels = self.DATASETS[self.dataset_name].N_CHANNELS
         self.n_classes = self.DATASETS[self.dataset_name].N_CLASSES
-        return self.dataset
+        return self.train_dataset, self.test_dataset
 
-    def get_data_loader(self, batch_size, shuffle=True):
-        data_loader = torch.utils.data.DataLoader(self.dataset, batch_size, shuffle=shuffle)
-        return data_loader
+    def get_data_loader(self, train: bool, batch_size: int, shuffle=True):
+        if train:
+            return torch.utils.data.DataLoader(self.train_dataset, batch_size, shuffle=shuffle)
+        else:
+            return torch.utils.data.DataLoader(self.test_dataset, batch_size, shuffle=shuffle)
 
     def get_random_sampled_data_loader(self, sample_percentage: float, batch_size: int):
         subset_indices = self._get_random_indices_of_data(data=self.dataset, sample_percentage=sample_percentage)

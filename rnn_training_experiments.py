@@ -1,9 +1,7 @@
-import os
 import time
 from typing import Optional
 
 import numpy as np
-import pandas as pd
 import torch
 
 import derivatives_factory
@@ -17,11 +15,11 @@ class RNNTrainingExperimentPyTorch:
     LOSSES = {
         'CrossEntropy': torch.nn.CrossEntropyLoss
     }
-    LOSS_NAME = 'LOSS'
-    TRAIN_NAME = 'TRAIN'
-    TEST_NAME = 'TEST'
-    PREDS_NAME = 'Y_PREDS'
-    Y_NAME = 'Y'
+    LOSS_TAG = 'LOSS'
+    TRAIN_TAG = 'TRAIN'
+    TEST_TAG = 'TEST'
+    PREDS_TAG = 'Y_PREDS'
+    Y_TAG = 'Y'
     BATCH_LOSS = 'BATCH_LOSS'
     BATCH_TAG = 'batch'
     EPOCH_TAG = 'epoch'
@@ -85,7 +83,7 @@ class RNNTrainingExperimentPyTorch:
         return self.LOSSES[self.loss_name]()
 
     def _train(self):
-        data_loader = self.dataset_generator.get_data_loader(batch_size=self.training_batch_size)
+        data_loader = self.dataset_generator.get_data_loader(batch_size=self.training_batch_size, train=True)
         eval_metrics = {}
         for epoch_index in range(self.epochs):
             start = time.time()
@@ -104,8 +102,7 @@ class RNNTrainingExperimentPyTorch:
                 eval_metrics = {self.BATCH_LOSS: loss.item()}
 
                 if self._do_compute_training_stats(batch_index=batch_index):
-                    eval_metrics, train_preds = self._evaluate_metrics(eval_metrics=eval_metrics,
-                                                                       prefix_name=self.TRAIN_NAME)
+                    eval_metrics, preds = self._evaluate_metrics(eval_metrics=eval_metrics)
                     # if self.best_preds_path is not None:
                     #     self._save_best_preds(preds=preds, eval_metrics=eval_metrics)
                     self._print_metrics(eval_metrics=eval_metrics, epoch_index=epoch_index, batch_index=batch_index)
@@ -141,13 +138,29 @@ class RNNTrainingExperimentPyTorch:
         self._save_best_model(eval_metrics=eval_metrics)
         return eval_metrics
 
-    def _evaluate_metrics(self, eval_metrics, prefix_name):
+    def _evaluate_metrics(self, eval_metrics):
         self._prepare_model_for_testing()
 
-        print('Computing predictions')
-        y_pred, y_true = self._get_all_preds_batchwise()
+        train_data_loader = self.dataset_generator.get_data_loader(batch_size=self.predict_batch_size, train=True)
+        test_data_loader = self.dataset_generator.get_data_loader(batch_size=self.predict_batch_size, train=False)
 
-        eval_metrics['{}_{}'.format(prefix_name, self.LOSS_NAME)] = self.loss_func(y_pred, y_true).item()
+        print('Computing train predictions')
+        y_train_pred, y_train_true = self._get_all_preds_batchwise(data_loader=train_data_loader)
+        print('Computing test predictions')
+        y_test_pred, y_test_true = self._get_all_preds_batchwise(data_loader=test_data_loader)
+
+        preds_dict = {
+            '{}_{}'.format(self.TRAIN_TAG, self.PREDS_TAG): y_train_pred,
+            '{}_{}'.format(self.TRAIN_TAG, self.Y_TAG): y_train_true,
+            '{}_{}'.format(self.TEST_TAG, self.PREDS_TAG): y_test_pred,
+            '{}_{}'.format(self.TEST_TAG, self.Y_TAG): y_test_true,
+        }
+
+        print('Computing train loss')
+        eval_metrics['{}_{}'.format(self.TRAIN_TAG, self.LOSS_TAG)] = self.loss_func(y_train_pred, y_train_true).item()
+        print('Computing test loss')
+        eval_metrics['{}_{}'.format(self.TEST_TAG, self.LOSS_TAG)] = self.loss_func(y_test_pred, y_test_true).item()
+
         print('Computing K')
         k_eigens = self.k_matrix_factory.compute_eigens(model=self.models_factory.model, criterion=self.loss_func)
         print('Computing H')
@@ -155,12 +168,6 @@ class RNNTrainingExperimentPyTorch:
 
         eval_metrics[self.K_EIGENS_TAG] = k_eigens
         eval_metrics[self.H_EIGENS_TAG] = h_eigens
-
-        preds_dict = {
-            '{}_{}'.format(prefix_name, self.PREDS_NAME): y_pred,
-            '{}_{}'.format(prefix_name, self.Y_NAME): y_true,
-
-        }
 
         # eval_metrics = self.metrics_factory.evaluate_metrics(
         #     y=y_true,
@@ -213,10 +220,9 @@ class RNNTrainingExperimentPyTorch:
             self.models_factory.save_model()
             self.optimisers_factory.save_optimiser()
 
-    def _get_all_preds_batchwise(self):
+    def _get_all_preds_batchwise(self, data_loader):
         y_pred = []
         y_true = []
-        data_loader = self.dataset_generator.get_data_loader(batch_size=self.predict_batch_size)
         for index, (x_batch, y_batch) in enumerate(data_loader):
             if self.do_cuda():
                 x_batch, y_batch = x_batch.cuda(), y_batch.cuda()
