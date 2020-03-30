@@ -66,7 +66,6 @@ def perform_experiment(experiment_dict_):
 def train_model(experiment_dict_: Dict):
     dataset_generator = datasets_loading_factory.DatasetGeneratorPyTorch(
         **experiment_dict_[DATASET_HYPERPARAMETERS],
-        train=True
     )
     k_matrix_factory = derivatives_factory.KMatrixFactory(
         dataset_generator=dataset_generator, **experiment_dict[K_HYPERPARAMETERS]
