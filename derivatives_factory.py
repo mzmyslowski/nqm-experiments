@@ -73,7 +73,7 @@ class HessianFactory:
             tolerance=self.tolerance,
             criterion=criterion,
         )
-        n_samples = int(self.sample_percentage * len(self.dataset_generator.dataset))
+        n_samples = int(self.sample_percentage * len(self.dataset_generator.train_dataset))
         normalized_eigenvalues = self._normalize_eigenvalues(
             eigenvalues=eigenvalues,
             sample_len=n_samples,
