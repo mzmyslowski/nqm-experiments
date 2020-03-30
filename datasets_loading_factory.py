@@ -50,7 +50,7 @@ class DatasetGeneratorPyTorch:
         self.n_classes = self.DATASETS[self.dataset_name].N_CLASSES
         return self.train_dataset, self.test_dataset
 
-    def get_data_loader(self, train: bool, batch_size: int, shuffle=True):
+    def get_data_loader(self, batch_size: int, shuffle=True, train: bool = True):
         if train:
             return torch.utils.data.DataLoader(self.train_dataset, batch_size, shuffle=shuffle)
         else:
