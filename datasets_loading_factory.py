@@ -56,9 +56,13 @@ class DatasetGeneratorPyTorch:
         else:
             return torch.utils.data.DataLoader(self.test_dataset, batch_size, shuffle=shuffle)
 
-    def get_random_sampled_data_loader(self, sample_percentage: float, batch_size: int):
-        subset_indices = self._get_random_indices_of_data(data=self.dataset, sample_percentage=sample_percentage)
-        random_subset_data = self._get_subset_of_data(data=self.dataset, subset_indices=subset_indices)
+    def get_random_sampled_data_loader(self, sample_percentage: float, batch_size: int, train: bool = True):
+        if train:
+            dataset = self.train_dataset
+        else:
+            dataset = self.test_dataset
+        subset_indices = self._get_random_indices_of_data(data=dataset, sample_percentage=sample_percentage)
+        random_subset_data = self._get_subset_of_data(data=dataset, subset_indices=subset_indices)
         return torch.utils.data.DataLoader(random_subset_data, batch_size, shuffle=False), subset_indices
 
     def _get_random_indices_of_data(self, data, sample_percentage):
