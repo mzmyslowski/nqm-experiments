@@ -50,7 +50,7 @@ class KMatrixFactory:
 
         ids = np.argsort(-eigenvalues)
         eigenvalues = eigenvalues[ids]
-        return eigenvalues
+        return eigenvalues, mean_g
 
 
 class HessianFactory:
