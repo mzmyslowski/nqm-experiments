@@ -1,7 +1,9 @@
+import os
 import time
 from typing import Optional
 
 import numpy as np
+import pandas as pd
 import torch
 
 import derivatives_factory
@@ -25,9 +27,20 @@ class RNNTrainingExperimentPyTorch:
     EPOCH_TAG = 'epoch'
     K_EIGENS_TAG = 'K_EIGENS'
     H_EIGENS_TAG = 'H_EIGENS'
+    MEAN_GRADIENT_NORM_TAG = 'MEAN_GRADIENT_NORM'
+    WEIGHTS_NORM_TAG = 'WEIGHTS_NORM'
+    WEIGHTS_INIT_COSINE_TAG = 'WEIGHTS_INIT_COSINE'
+    WEIGHTS_INIT_DISTANCE_TAG = 'WEIGHTS_INIT_DISTANCE'
+    BEST_PREDS_RELATIVE_PATH = 'best_preds.npy'
+    EVAL_METRICS_RELATIVE_PATH = 'eval_metrics.csv'
+    BEST_MODEL_RELATIVE_PATH = 'best_model.pt'
+    BEST_OPTIMISER_RELATIVE_PATH = 'best_optimiser.pt'
+    MODEL_RELATIVE_PATH = 'model.pt'
+    OPTIMISER_RELATIVE_PATH = 'optimiser.pt'
 
     def __init__(
             self,
+            experiment_path: str,
             loss_name: str,
             epochs: int,
             compute_training_stats_step: int,
@@ -37,16 +50,17 @@ class RNNTrainingExperimentPyTorch:
             dataset_generator: datasets_loading_factory.DatasetGeneratorPyTorch,
             models_factory: models_factory.ModelsFactory,
             optimisers_factory: optimisation_factory.OptimisersFactory,
-            metrics_factory: metrics_factory.MetricsFactory,
-            k_matrix_factory: derivatives_factory.KMatrixFactory,
-            hessian_factory: derivatives_factory.HessianFactory,
+            metrics_factory: Optional[metrics_factory.MetricsFactory] = None,
+            k_matrix_factory: Optional[derivatives_factory.KMatrixFactory] = None,
+            hessian_factory: Optional[derivatives_factory.HessianFactory] = None,
             save_best_preds_by: Optional[str] = None,
-            best_preds_path: Optional[str] = None,
-            eval_metrics_path: Optional[str] = None,
-            batch_metrics_path: Optional[str] = None,
             target_metric_value: Optional[float] = None,
             target_metric_name: Optional[str] = None,
+            max_epoch_without_improvement: Optional[int] = None,
     ):
+        self.experiment_path = experiment_path
+        self.best_preds_path = os.path.join(experiment_path, self.BEST_PREDS_RELATIVE_PATH)
+        self.eval_metrics_path = os.path.join(experiment_path, self.EVAL_METRICS_RELATIVE_PATH)
         self.loss_name = loss_name
         self.epochs = epochs
         self.compute_training_stats_step = compute_training_stats_step
@@ -61,12 +75,11 @@ class RNNTrainingExperimentPyTorch:
         self.k_matrix_factory = k_matrix_factory
         self.loss_func = None
         self.best_metric_value = None
-        self.save_best_preds_by = save_best_preds_by
-        self.best_preds_path = best_preds_path
-        self.eval_metrics_path = eval_metrics_path
-        assert (target_metric_value is None) == (target_metric_name is None)
         self.target_metric_value = target_metric_value
         self.target_metric_name = target_metric_name
+        self.initial_weights = None
+        self.max_epoch_without_improvement = max_epoch_without_improvement
+        self.best_epoch = 0
 
     def run(self):
         self.dataset_generator.init_dataset()
@@ -75,6 +88,7 @@ class RNNTrainingExperimentPyTorch:
             n_channels=self.dataset_generator.n_channels,
             n_classes=self.dataset_generator.n_classes
         )
+        self.initial_weights = torch.nn.utils.parameters_to_vector(model.parameters())
         self.optimisers_factory.init_optimiser(weights=model.parameters())
         self.loss_func = self._get_loss_func()
         self._train()
@@ -88,6 +102,21 @@ class RNNTrainingExperimentPyTorch:
         for epoch_index in range(self.epochs):
             start = time.time()
             for batch_index, (x_batch, y_batch) in enumerate(data_loader):
+
+                if self._do_compute_training_stats(batch_index=batch_index):
+                    eval_metrics, preds = self._evaluate_metrics(eval_metrics=eval_metrics)
+                    if self.target_metric_name is not None:
+                        self._update_target_metric_value(eval_metrics=eval_metrics, epoch=epoch_index)
+                    self._print_metrics(eval_metrics=eval_metrics, epoch_index=epoch_index, batch_index=batch_index)
+                    if self.eval_metrics_path is not None:
+                        self._save_evaluated_metrics(eval_metrics=eval_metrics, epoch_index=epoch_index,
+                                                     batch_index=batch_index)
+                    self._save_model(model_name=self.MODEL_RELATIVE_PATH, optimiser_name=self.OPTIMISER_RELATIVE_PATH)
+                    if self.target_metric_name is not None:
+                        self._save_best_model(eval_metrics=eval_metrics)
+                    if self._do_stop_training(eval_metrics=eval_metrics, epoch=epoch_index):
+                        break
+
                 self.models_factory.prepare_model_for_training()
 
                 if self.do_cuda():
@@ -99,22 +128,8 @@ class RNNTrainingExperimentPyTorch:
 
                 self._update_weights(loss=loss)
 
-                eval_metrics = {self.BATCH_LOSS: loss.item()}
-
-                if self._do_compute_training_stats(batch_index=batch_index):
-                    eval_metrics, preds = self._evaluate_metrics(eval_metrics=eval_metrics)
-                    # if self.best_preds_path is not None:
-                    #     self._save_best_preds(preds=preds, eval_metrics=eval_metrics)
-                    self._print_metrics(eval_metrics=eval_metrics, epoch_index=epoch_index, batch_index=batch_index)
-                    if self.eval_metrics_path is not None:
-                        self._save_evaluated_metrics(eval_metrics=eval_metrics, epoch_index=epoch_index,
-                                                     batch_index=batch_index)
-                    self._save_best_model(eval_metrics=eval_metrics)
-                    if self._do_stop_training(eval_metrics=eval_metrics):
-                        break
-
             print('Epoch time', time.time() - start)
-            if self._do_stop_training(eval_metrics=eval_metrics):
+            if self._do_stop_training(eval_metrics=eval_metrics, epoch=epoch_index):
                 break
 
     @staticmethod
@@ -128,15 +143,6 @@ class RNNTrainingExperimentPyTorch:
 
     def _do_compute_training_stats(self, batch_index):
         return batch_index % self.compute_training_stats_step == 0
-
-    def _compute_training_stats(self, eval_metrics, epoch_index, batch_index):
-        # if self.best_preds_path is not None:
-        #     self._save_best_preds(preds=preds, eval_metrics=eval_metrics)
-        self._print_metrics(eval_metrics=eval_metrics, epoch_index=epoch_index, batch_index=batch_index)
-        if self.eval_metrics_path is not None:
-            self._save_evaluated_metrics(eval_metrics=eval_metrics, epoch_index=epoch_index, batch_index=batch_index)
-        self._save_best_model(eval_metrics=eval_metrics)
-        return eval_metrics
 
     def _evaluate_metrics(self, eval_metrics):
         self._prepare_model_for_testing()
@@ -161,35 +167,50 @@ class RNNTrainingExperimentPyTorch:
         print('Computing test loss')
         eval_metrics['{}_{}'.format(self.TEST_TAG, self.LOSS_TAG)] = self.loss_func(y_test_pred, y_test_true).item()
 
-        print('Computing K')
-        k_eigens = self.k_matrix_factory.compute_eigens(model=self.models_factory.model, criterion=self.loss_func)
-        print('Computing H')
-        h_eigens = self.hessian_factory.compute_eigens(model=self.models_factory.model, criterion=self.loss_func)
+        if self.k_matrix_factory is not None:
+            print('Computing K')
+            k_eigens, mean_gradient = self.k_matrix_factory.compute_eigens(
+                model=self.models_factory.model, criterion=self.loss_func
+            )
+            k_eigens_dict = {'{}_{}'.format(self.K_EIGENS_TAG, index): k for index, k in enumerate(k_eigens)}
+            eval_metrics.update(k_eigens_dict)
+            eval_metrics[self.MEAN_GRADIENT_NORM_TAG] = np.linalg.norm(mean_gradient)
 
-        eval_metrics[self.K_EIGENS_TAG] = k_eigens
-        eval_metrics[self.H_EIGENS_TAG] = h_eigens
+        if self.hessian_factory is not None:
+            print('Computing H')
+            h_eigens = self.hessian_factory.compute_eigens(model=self.models_factory.model, criterion=self.loss_func)
+            h_eigens_dict = {'{}_{}'.format(self.H_EIGENS_TAG, index): h for index, h in enumerate(reversed(h_eigens))}
+            eval_metrics.update(h_eigens_dict)
 
-        # eval_metrics = self.metrics_factory.evaluate_metrics(
-        #     y=y_true,
-        #     y_pred=y_pred,
-        #     prefix_name=prefix_name,
-        # )
+        weights = torch.nn.utils.parameters_to_vector(self.models_factory.model.parameters())
+        eval_metrics[self.WEIGHTS_NORM_TAG] = weights.norm().item()
+        eval_metrics[self.WEIGHTS_INIT_COSINE_TAG] = (self.initial_weights.dot(weights) / (self.initial_weights.norm() * weights.norm())).item()
+        eval_metrics[self.WEIGHTS_INIT_DISTANCE_TAG] = (self.initial_weights - weights).norm().item()
+
         return eval_metrics, preds_dict
 
     def _prepare_model_for_testing(self):
         self.models_factory.prepare_model_for_testing()
 
-    def _save_best_preds(self, preds, eval_metrics):
+    def _update_target_metric_value(self, eval_metrics, epoch):
         if (
-                self.save_best_preds_by is not None and
-                (
-                        self.best_metric_value is None or
-                        self.best_metric_value >= eval_metrics[self.save_best_preds_by]
-                )
+                self.best_metric_value is None or
+                self.best_metric_value >= eval_metrics[self.target_metric_name]
         ):
-                self.best_metric_value = eval_metrics[self.save_best_preds_by]
-                file_name = self.best_preds_path
-                np.save(file_name, preds)
+            self.best_metric_value = eval_metrics[self.target_metric_name]
+            self.best_epoch = epoch
+
+    # def _save_best_preds(self, preds, eval_metrics):
+    #     if (
+    #             self.save_best_preds_by is not None and
+    #             (
+    #                     self.best_metric_value is None or
+    #                     self.best_metric_value >= eval_metrics[self.save_best_preds_by]
+    #             )
+    #     ):
+    #             self.best_metric_value = eval_metrics[self.save_best_preds_by]
+    #             file_name = self.best_preds_path
+    #             np.save(file_name, preds)
 
     def _print_metrics(self, eval_metrics, epoch_index, batch_index):
         printing_index = 'Epoch {} Batch {}'.format(epoch_index, batch_index)
@@ -198,27 +219,25 @@ class RNNTrainingExperimentPyTorch:
         print('\n')
 
     def _save_evaluated_metrics(self, eval_metrics, epoch_index, batch_index):
-        np.save(self.eval_metrics_path.format(epoch_index, batch_index), eval_metrics)
-        # df = pd.DataFrame(eval_metrics, index=[0])
-        # df[self.EPOCH_TAG] = epoch_index
-        # df[self.BATCH_TAG] = batch_index
-        # if not os.path.exists(self.eval_metrics_path):
-        #     df.to_csv(self.eval_metrics_path)
-        # else:
-        #     with open(self.eval_metrics_path, 'a') as f:
-        #         df.to_csv(f, header=False)
+        df = pd.DataFrame(eval_metrics, index=[0])
+        df[self.EPOCH_TAG] = epoch_index
+        df[self.BATCH_TAG] = batch_index
+        if not os.path.exists(self.eval_metrics_path):
+            df.to_csv(self.eval_metrics_path)
+        else:
+            df.to_csv(self.eval_metrics_path, mode='a', header=False)
 
     def _save_best_model(self, eval_metrics):
         if (
-                self.save_best_preds_by is not None and
-                (
-                        self.best_metric_value is None or
-                        self.best_metric_value >= eval_metrics[self.save_best_preds_by]
-                )
+                self.best_metric_value is None or
+                self.best_metric_value >= eval_metrics[self.target_metric_value]
         ):
-            self.best_metric_value = eval_metrics[self.save_best_preds_by]
-            self.models_factory.save_model()
-            self.optimisers_factory.save_optimiser()
+            self.best_metric_value = eval_metrics[self.target_metric_name]
+            self._save_model(model_name=self.BEST_MODEL_RELATIVE_PATH, optimiser_name=self.BEST_OPTIMISER_RELATIVE_PATH)
+
+    def _save_model(self, model_name, optimiser_name):
+        self.models_factory.save_model(name=model_name)
+        self.optimisers_factory.save_optimiser(name=optimiser_name)
 
     def _get_all_preds_batchwise(self, data_loader):
         y_pred = []
@@ -233,8 +252,12 @@ class RNNTrainingExperimentPyTorch:
         y_true_tensor = torch.cat(y_true)
         return y_pred_tensor, y_true_tensor
 
-    def _do_stop_training(self, eval_metrics):
+    def _do_stop_training(self, eval_metrics, epoch):
         return (
                 eval_metrics.get(self.target_metric_name) is not None and
                 eval_metrics[self.target_metric_name] <= self.target_metric_value
+        ) or (
+                self.max_epoch_without_improvement is not None and
+                self.target_metric_name is not None and
+                self.max_epoch_without_improvement >= epoch - self.best_epoch
         )
