@@ -1,4 +1,6 @@
+import os
 from typing import Dict, Optional
+
 import torch
 
 
@@ -10,7 +12,7 @@ class OptimisersFactory:
     def init_optimiser(self, weights):
         raise NotImplementedError
 
-    def save_optimiser(self):
+    def save_optimiser(self, name):
         raise NotImplementedError
 
 
@@ -29,10 +31,10 @@ class OptimisersFactoryPyTorch(OptimisersFactory):
             optimiser_name: str,
             lr: float,
             l2_rate: float,
+            path_to_save: Optional[str] = None,
             additional_params: Optional[Dict] = None,
             optimiser_path: Optional[str] = None,
             use_new_params: bool = True,
-            path_to_save: str = './optimiser.pt'
     ):
         super().__init__()
         self.optimiser_name = optimiser_name
@@ -65,8 +67,9 @@ class OptimisersFactoryPyTorch(OptimisersFactory):
         checkpoint = torch.load(self.optimiser_path)
         optimiser.load_state_dict(checkpoint)
 
-    def save_optimiser(self):
-        torch.save(self.optimiser.state_dict(), self.path_to_save)
+    def save_optimiser(self, name):
+        path = os.path.join(self.path_to_save, name)
+        torch.save(self.optimiser.state_dict(), path)
 
 
 class SchedulersFactory:
@@ -96,7 +99,7 @@ class SchedulersFactoryPyTorch(SchedulersFactory):
             scheduler_name: str,
             scheduler_params: Optional[Dict] = None,
             scheduler_path: Optional[str] = None,
-            path_to_save: str = './scheduler.pt',
+            path_to_save: str = './',
     ):
         super().__init__()
         self.scheduler_name = scheduler_name
