@@ -228,7 +228,7 @@ class RNNTrainingExperimentPyTorch:
             df.to_csv(self.eval_metrics_path, mode='a', header=False)
 
     def _save_best_model(self, eval_metrics):
-        if self.best_metric_value <= eval_metrics[self.target_metric_value]:
+        if self.best_metric_value <= eval_metrics[self.target_metric_name]:
             self._save_model(model_name=self.BEST_MODEL_RELATIVE_PATH, optimiser_name=self.BEST_OPTIMISER_RELATIVE_PATH)
 
     def _save_model(self, model_name, optimiser_name):
@@ -255,5 +255,5 @@ class RNNTrainingExperimentPyTorch:
         ) or (
                 self.max_epoch_without_improvement is not None and
                 self.target_metric_name is not None and
-                self.max_epoch_without_improvement >= epoch - self.best_epoch
+                self.max_epoch_without_improvement <= epoch - self.best_epoch
         )
