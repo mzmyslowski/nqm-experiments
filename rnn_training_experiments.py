@@ -195,7 +195,7 @@ class RNNTrainingExperimentPyTorch:
     def _update_target_metric_value(self, eval_metrics, epoch):
         if (
                 self.best_metric_value is None or
-                self.best_metric_value >= eval_metrics[self.target_metric_name]
+                self.best_metric_value < eval_metrics[self.target_metric_name]
         ):
             self.best_metric_value = eval_metrics[self.target_metric_name]
             self.best_epoch = epoch
