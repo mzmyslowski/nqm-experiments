@@ -1,97 +1,46 @@
 [
-  {
-    "experiment_name": "4_1e-1_KH",
+    {
+    "experiment_name": "128_1e-2_converge",
     "dataset_hyperparameters": {
       "dataset_name": "CIFAR10"
     },
     "training_hyperparameters": {
       "loss_name": "CrossEntropy",
-      "epochs": 50,
-      "compute_training_stats_step": 20000,
-      "training_batch_size": 4,
+      "epochs": 1000,
+      "compute_training_stats_step": 50000,
+      "training_batch_size": 128,
       "predict_batch_size": 2000,
       "random_seed": 777,
-      "eval_metrics_path": "./4_1e-1_KH/eval_metrics_{}_{}.npy",
       "target_metric_name": "TRAIN_LOSS",
-      "target_metric_value": 0.01
+      "target_metric_value": 0.01,
+      "max_epoch_without_improvement": 100
     },
     "optimiser_hyperparameters": {
       "optimiser_name": "SGD",
-      "lr": 0.1,
-      "l2_rate": 0
+      "lr": 0.01,
+      "l2_rate": 0,
+      "optimiser_path": "drive/My Drive/Colab Notebooks/128_1e-2_converge/optimiser.pt"
     },
     "model_hyperparameters": {
-      "model_name": "SimpleCNN"
-    },
-    "metrics_hyperparameters": {
-      "metrics_names": {}
-    },
-    "k_matrix_hyperparameters": {
-      "batch_size": 128,
-      "L": 25,
-      "center": true
-    },
-    "hessian_hyperparameters": {
-      "k": 5,
-      "batch_size": 2500,
-      "sample_percentage": 0.01,
-      "tolerance": 1e-2
+      "model_name": "SimpleCNN",
+      "model_path": "drive/My Drive/Colab Notebooks/128_1e-2_converge/model.pt"
     }
   },
     {
-    "experiment_name": "2048_1e-1_KH",
+    "experiment_name": "512_1e-2_converge",
     "dataset_hyperparameters": {
       "dataset_name": "CIFAR10"
     },
     "training_hyperparameters": {
       "loss_name": "CrossEntropy",
-      "epochs": 50,
-      "compute_training_stats_step": 2000,
-      "training_batch_size": 2048,
+      "epochs": 1000,
+      "compute_training_stats_step": 50000,
+      "training_batch_size": 512,
       "predict_batch_size": 2000,
       "random_seed": 777,
-      "eval_metrics_path": "./2048_1e-1_KH/eval_metrics_{}_{}.npy",
       "target_metric_name": "TRAIN_LOSS",
-      "target_metric_value": 0.01
-    },
-    "optimiser_hyperparameters": {
-      "optimiser_name": "SGD",
-      "lr": 0.1,
-      "l2_rate": 0
-    },
-    "model_hyperparameters": {
-      "model_name": "SimpleCNN"
-    },
-    "metrics_hyperparameters": {
-      "metrics_names": {}
-    },
-      "k_matrix_hyperparameters": {
-      "batch_size": 128,
-      "L": 25,
-      "center": true
-    },
-    "hessian_hyperparameters": {
-      "k": 5,
-      "batch_size": 2500,
-      "sample_percentage": 0.01,
-      "tolerance": 1e-2
-    }
-  },
-    {
-    "experiment_name": "4_1e-10_KH",
-    "dataset_hyperparameters": {
-      "dataset_name": "CIFAR10"
-    },
-    "training_hyperparameters": {
-      "loss_name": "CrossEntropy",
-      "epochs": 50,
-      "compute_training_stats_step": 20000,
-      "training_batch_size": 4,
-      "predict_batch_size": 2000,
-      "random_seed": 777,
-      "eval_metrics_path": "./4_1e-10_KH/eval_metrics_{}_{}.npy",
-      "target_metric_name": "TRAIN_LOSS",
-      "target_metric_value": 0.01
+      "target_metric_value": 0.01,
+      "max_epoch_without_improvement": 100
     },
     "optimiser_hyperparameters": {
       "optimiser_name": "SGD",
@@ -100,37 +49,23 @@
     },
     "model_hyperparameters": {
       "model_name": "SimpleCNN"
-    },
-    "metrics_hyperparameters": {
-      "metrics_names": {}
-    },
-      "k_matrix_hyperparameters": {
-      "batch_size": 128,
-      "L": 25,
-      "center": true
-    },
-    "hessian_hyperparameters": {
-      "k": 5,
-      "batch_size": 2500,
-      "sample_percentage": 0.01,
-      "tolerance": 1e-2
     }
   },
     {
-    "experiment_name": "2048_1e-10_KH",
+    "experiment_name": "2048_1e-2_converge",
     "dataset_hyperparameters": {
       "dataset_name": "CIFAR10"
     },
     "training_hyperparameters": {
       "loss_name": "CrossEntropy",
-      "epochs": 50,
-      "compute_training_stats_step": 2000,
+      "epochs": 1000,
+      "compute_training_stats_step": 50000,
       "training_batch_size": 2048,
       "predict_batch_size": 2000,
       "random_seed": 777,
-      "eval_metrics_path": "./2048_1e-10_KH/eval_metrics_{}_{}.npy",
       "target_metric_name": "TRAIN_LOSS",
-      "target_metric_value": 0.01
+      "target_metric_value": 0.01,
+      "max_epoch_without_improvement": 100
     },
     "optimiser_hyperparameters": {
       "optimiser_name": "SGD",
@@ -139,98 +74,6 @@
     },
     "model_hyperparameters": {
       "model_name": "SimpleCNN"
-    },
-    "metrics_hyperparameters": {
-      "metrics_names": {}
-    },
-      "k_matrix_hyperparameters": {
-      "batch_size": 128,
-      "L": 25,
-      "center": true
-    },
-    "hessian_hyperparameters": {
-      "k": 5,
-      "batch_size": 2500,
-      "sample_percentage": 0.01,
-      "tolerance": 1e-2
-    }
-  },
-    {
-    "experiment_name": "4_1e-100_KH",
-    "dataset_hyperparameters": {
-      "dataset_name": "CIFAR10"
-    },
-    "training_hyperparameters": {
-      "loss_name": "CrossEntropy",
-      "epochs": 50,
-      "compute_training_stats_step": 20000,
-      "training_batch_size": 4,
-      "predict_batch_size": 2000,
-      "random_seed": 777,
-      "eval_metrics_path": "./4_1e-100_KH/eval_metrics_{}_{}.npy",
-      "target_metric_name": "TRAIN_LOSS",
-      "target_metric_value": 0.01
-    },
-    "optimiser_hyperparameters": {
-      "optimiser_name": "SGD",
-      "lr": 0.001,
-      "l2_rate": 0
-    },
-    "model_hyperparameters": {
-      "model_name": "SimpleCNN"
-    },
-    "metrics_hyperparameters": {
-      "metrics_names": {}
-    },
-      "k_matrix_hyperparameters": {
-      "batch_size": 128,
-      "L": 25,
-      "center": true
-    },
-    "hessian_hyperparameters": {
-      "k": 5,
-      "batch_size": 2500,
-      "sample_percentage": 0.01,
-      "tolerance": 1e-2
-    }
-  },
-    {
-    "experiment_name": "2048_1e-100_KH",
-    "dataset_hyperparameters": {
-      "dataset_name": "CIFAR10"
-    },
-    "training_hyperparameters": {
-      "loss_name": "CrossEntropy",
-      "epochs": 50,
-      "compute_training_stats_step": 2000,
-      "training_batch_size": 2048,
-      "predict_batch_size": 2000,
-      "random_seed": 777,
-      "eval_metrics_path": "./2048_1e-100_KH/eval_metrics_{}_{}.npy",
-      "target_metric_name": "TRAIN_LOSS",
-      "target_metric_value": 0.01
-    },
-    "optimiser_hyperparameters": {
-      "optimiser_name": "SGD",
-      "lr": 0.001,
-      "l2_rate": 0
-    },
-    "model_hyperparameters": {
-      "model_name": "SimpleCNN"
-    },
-    "metrics_hyperparameters": {
-      "metrics_names": {}
-    },
-      "k_matrix_hyperparameters": {
-      "batch_size": 128,
-      "L": 25,
-      "center": true
-    },
-    "hessian_hyperparameters": {
-      "k": 5,
-      "batch_size": 2000,
-      "sample_percentage": 0.01,
-      "tolerance": 1e-2
     }
   }
 ]
