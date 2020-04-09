@@ -1,3 +1,4 @@
+import os
 from typing import Optional
 
 import torch
@@ -50,9 +51,9 @@ class ModelsFactory:
 
     def __init__(
             self,
-            model_name,
+            model_name: str,
+            path_to_save: Optional[str] = None,
             model_path: Optional[str] = None,
-            path_to_save: str = './model.pt'
     ):
         self.model_name = model_name
         self.model_path = model_path
@@ -89,8 +90,9 @@ class ModelsFactory:
     def prepare_model_for_testing(self):
         self.model.eval()
 
-    def save_model(self):
-        torch.save(self.model.state_dict(), self.path_to_save)
+    def save_model(self, name):
+        path = os.path.join(self.path_to_save, name)
+        torch.save(self.model.state_dict(), path)
 
     @staticmethod
     def do_cuda():
