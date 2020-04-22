@@ -31,8 +31,8 @@ class RNNTrainingExperimentPyTorch:
     WEIGHTS_NORM_TAG = 'WEIGHTS_NORM'
     WEIGHTS_INIT_COSINE_TAG = 'WEIGHTS_INIT_COSINE'
     WEIGHTS_INIT_DISTANCE_TAG = 'WEIGHTS_INIT_DISTANCE'
+    GRADIENT_HESSIAN_OVERLAP_TAG = 'GRADIENT_HESSIAN_OVERLAP'
     BEST_PREDS_RELATIVE_PATH = 'best_preds.npy'
-    EVAL_METRICS_RELATIVE_PATH = 'eval_metrics.csv'
     BEST_MODEL_RELATIVE_PATH = 'best_model.pt'
     BEST_OPTIMISER_RELATIVE_PATH = 'best_optimiser.pt'
     MODEL_RELATIVE_PATH = 'model.pt'
@@ -57,10 +57,13 @@ class RNNTrainingExperimentPyTorch:
             target_metric_value: Optional[float] = None,
             target_metric_name: Optional[str] = None,
             max_epoch_without_improvement: Optional[int] = None,
+            eval_metrics_file_name: str = 'eval_metrics.csv',
+            save_model: bool = True,
+            save_best_model: bool = True,
     ):
         self.experiment_path = experiment_path
         self.best_preds_path = os.path.join(experiment_path, self.BEST_PREDS_RELATIVE_PATH)
-        self.eval_metrics_path = os.path.join(experiment_path, self.EVAL_METRICS_RELATIVE_PATH)
+        self.eval_metrics_path = os.path.join(experiment_path, eval_metrics_file_name)
         self.loss_name = loss_name
         self.epochs = epochs
         self.compute_training_stats_step = compute_training_stats_step
@@ -77,9 +80,10 @@ class RNNTrainingExperimentPyTorch:
         self.best_metric_value = None
         self.target_metric_value = target_metric_value
         self.target_metric_name = target_metric_name
-        self.initial_weights = None
         self.max_epoch_without_improvement = max_epoch_without_improvement
         self.best_epoch = 0
+        self.save_model = save_model
+        self.save_best_model = save_best_model
 
     def run(self):
         self.dataset_generator.init_dataset()
@@ -88,7 +92,6 @@ class RNNTrainingExperimentPyTorch:
             n_channels=self.dataset_generator.n_channels,
             n_classes=self.dataset_generator.n_classes
         )
-        self.initial_weights = torch.nn.utils.parameters_to_vector(model.parameters())
         self.optimisers_factory.init_optimiser(weights=model.parameters())
         self.loss_func = self._get_loss_func()
         self._train()
@@ -111,8 +114,9 @@ class RNNTrainingExperimentPyTorch:
                     if self.eval_metrics_path is not None:
                         self._save_evaluated_metrics(eval_metrics=eval_metrics, epoch_index=epoch_index,
                                                      batch_index=batch_index)
-                    self._save_model(model_name=self.MODEL_RELATIVE_PATH, optimiser_name=self.OPTIMISER_RELATIVE_PATH)
-                    if self.target_metric_name is not None:
+                    if self.save_model:
+                        self._save_model(model_name=self.MODEL_RELATIVE_PATH, optimiser_name=self.OPTIMISER_RELATIVE_PATH)
+                    if self.target_metric_name is not None and self.save_best_model:
                         self._save_best_model(eval_metrics=eval_metrics)
                     if self._do_stop_training(eval_metrics=eval_metrics, epoch=epoch_index):
                         break
@@ -178,16 +182,31 @@ class RNNTrainingExperimentPyTorch:
 
         if self.hessian_factory is not None:
             print('Computing H')
-            h_eigens = self.hessian_factory.compute_eigens(model=self.models_factory.model, criterion=self.loss_func)
-            h_eigens_dict = {'{}_{}'.format(self.H_EIGENS_TAG, index): h for index, h in enumerate(reversed(h_eigens))}
+            h_eigenvalues, h_eigenvectors = self.hessian_factory.compute_eigens(
+                model=self.models_factory.model, criterion=self.loss_func
+            )
+            h_eigens_dict = {
+                '{}_{}'.format(self.H_EIGENS_TAG, index): h for index, h in enumerate(reversed(h_eigenvalues))
+            }
             eval_metrics.update(h_eigens_dict)
+
+        if self.hessian_factory is not None and self.k_matrix_factory is not None:
+            eval_metrics[self.GRADIENT_HESSIAN_OVERLAP_TAG] = self._compute_gradient_hessian_overlap(
+                gradient=mean_gradient,
+                H=h_eigenvectors
+            )
 
         weights = torch.nn.utils.parameters_to_vector(self.models_factory.model.parameters())
         eval_metrics[self.WEIGHTS_NORM_TAG] = weights.norm().item()
-        eval_metrics[self.WEIGHTS_INIT_COSINE_TAG] = (self.initial_weights.dot(weights) / (self.initial_weights.norm() * weights.norm())).item()
-        eval_metrics[self.WEIGHTS_INIT_DISTANCE_TAG] = (self.initial_weights - weights).norm().item()
-
+        eval_metrics[self.WEIGHTS_INIT_COSINE_TAG] = (
+                self.models_factory.init_weights.dot(weights) /
+                (self.models_factory.init_weights.norm() * weights.norm())
+        ).item()
+        eval_metrics[self.WEIGHTS_INIT_DISTANCE_TAG] = (self.models_factory.init_weights - weights).norm().item()
         return eval_metrics, preds_dict
+
+    def _compute_gradient_hessian_overlap(self, gradient, H):
+        return np.linalg.norm(gradient.dot(H)) / np.linalg.norm(gradient)
 
     def _prepare_model_for_testing(self):
         self.models_factory.prepare_model_for_testing()
@@ -195,7 +214,7 @@ class RNNTrainingExperimentPyTorch:
     def _update_target_metric_value(self, eval_metrics, epoch):
         if (
                 self.best_metric_value is None or
-                self.best_metric_value < eval_metrics[self.target_metric_name]
+                self.best_metric_value > eval_metrics[self.target_metric_name]
         ):
             self.best_metric_value = eval_metrics[self.target_metric_name]
             self.best_epoch = epoch
@@ -228,7 +247,7 @@ class RNNTrainingExperimentPyTorch:
             df.to_csv(self.eval_metrics_path, mode='a', header=False)
 
     def _save_best_model(self, eval_metrics):
-        if self.best_metric_value <= eval_metrics[self.target_metric_name]:
+        if self.best_metric_value >= eval_metrics[self.target_metric_name]:
             self._save_model(model_name=self.BEST_MODEL_RELATIVE_PATH, optimiser_name=self.BEST_OPTIMISER_RELATIVE_PATH)
 
     def _save_model(self, model_name, optimiser_name):

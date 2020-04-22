@@ -79,7 +79,7 @@ class HessianFactory:
             sample_len=n_samples,
             batch_size=self.batch_size
         )
-        return normalized_eigenvalues
+        return normalized_eigenvalues, eigenvectors
 
     def _get_k_loss_hessian_eigens(
             self,

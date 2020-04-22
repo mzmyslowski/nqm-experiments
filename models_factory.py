@@ -48,6 +48,8 @@ class ModelsFactory:
     MODELS = {
         'SimpleCNN': SimpleCNN
     }
+    MODEL_STATE_DICT = 'model_state_dict'
+    INIT_WEIGHTS = 'initial_weights'
 
     def __init__(
             self,
@@ -62,6 +64,7 @@ class ModelsFactory:
         self.n_channels = None
         self.n_classes = None
         self.model = None
+        self.init_weights = None
 
     def init_model(self, dimensionality: int, n_channels: int, n_classes: int,):
         """Get the architecture of the model by name."""
@@ -73,16 +76,19 @@ class ModelsFactory:
             n_channels=n_channels,
             n_classes=n_classes,
         )
+        self.init_weights = torch.nn.utils.parameters_to_vector(model.parameters())
         if self.model_path is not None:
             self._load_model_params(model=model)
         if self.do_cuda():
             model.cuda()
+            self.init_weights = self.init_weights.cuda()
         self.model = model
         return model
 
     def _load_model_params(self, model):
         checkpoint = torch.load(self.model_path)
-        model.load_state_dict(checkpoint)
+        model.load_state_dict(checkpoint[self.MODEL_STATE_DICT])
+        self.init_weights = checkpoint[self.INIT_WEIGHTS]
 
     def prepare_model_for_training(self):
         self.model.train()
@@ -92,7 +98,13 @@ class ModelsFactory:
 
     def save_model(self, name):
         path = os.path.join(self.path_to_save, name)
-        torch.save(self.model.state_dict(), path)
+        torch.save(
+            {
+                self.MODEL_STATE_DICT: self.model.state_dict(),
+                self.INIT_WEIGHTS: torch.nn.utils.parameters_to_vector(self.model.parameters())
+            },
+            path
+        )
 
     @staticmethod
     def do_cuda():
