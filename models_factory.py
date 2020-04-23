@@ -101,7 +101,7 @@ class ModelsFactory:
         torch.save(
             {
                 self.MODEL_STATE_DICT: self.model.state_dict(),
-                self.INIT_WEIGHTS: torch.nn.utils.parameters_to_vector(self.model.parameters())
+                self.INIT_WEIGHTS: self.init_weights
             },
             path
         )
