@@ -194,7 +194,7 @@ class RNNTrainingExperimentPyTorch:
             for i in range(1, self.hessian_factory.k + 1):
                 eval_metrics[self.GRADIENT_HESSIAN_OVERLAP_TAG + '_' + str(i)] = self._compute_gradient_hessian_overlap(
                     gradient=mean_gradient,
-                    H=h_eigenvectors[:, :i]
+                    H=h_eigenvectors[:, -i:]
                 )
 
         weights = torch.nn.utils.parameters_to_vector(self.models_factory.model.parameters())
