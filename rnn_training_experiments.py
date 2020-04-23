@@ -191,19 +191,23 @@ class RNNTrainingExperimentPyTorch:
             eval_metrics.update(h_eigens_dict)
 
         if self.hessian_factory is not None and self.k_matrix_factory is not None:
-            eval_metrics[self.GRADIENT_HESSIAN_OVERLAP_TAG] = self._compute_gradient_hessian_overlap(
-                gradient=mean_gradient,
-                H=h_eigenvectors
-            )
+            for i in range(1, self.hessian_factory.k + 1):
+                eval_metrics[self.GRADIENT_HESSIAN_OVERLAP_TAG + '_' + str(i)] = self._compute_gradient_hessian_overlap(
+                    gradient=mean_gradient,
+                    H=h_eigenvectors[:, :i]
+                )
 
         weights = torch.nn.utils.parameters_to_vector(self.models_factory.model.parameters())
         eval_metrics[self.WEIGHTS_NORM_TAG] = weights.norm().item()
-        eval_metrics[self.WEIGHTS_INIT_COSINE_TAG] = (
-                self.models_factory.init_weights.dot(weights) /
-                (self.models_factory.init_weights.norm() * weights.norm())
-        ).item()
+        eval_metrics[self.WEIGHTS_INIT_COSINE_TAG] = self._compute_cosine_similarity(
+            x=self.models_factory.init_weights,
+            y=weights
+        )
         eval_metrics[self.WEIGHTS_INIT_DISTANCE_TAG] = (self.models_factory.init_weights - weights).norm().item()
         return eval_metrics, preds_dict
+
+    def _compute_cosine_similarity(self, x, y):
+        return (x.dot(y) / (x.norm() * y.norm())).item()
 
     def _compute_gradient_hessian_overlap(self, gradient, H):
         return np.linalg.norm(gradient.dot(H)) / np.linalg.norm(gradient)

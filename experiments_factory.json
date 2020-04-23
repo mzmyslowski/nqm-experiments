@@ -6,7 +6,7 @@
     },
     "training_hyperparameters": {
       "loss_name": "CrossEntropy",
-      "epochs": 2,
+      "epochs": 15,
       "compute_training_stats_step": 50000,
       "training_batch_size": 32,
       "predict_batch_size": 2000,
@@ -32,8 +32,8 @@
     },
     "hessian_hyperparameters": {
       "k": 5,
-      "batch_size": 2500,
-      "sample_percentage": 0.1,
+      "batch_size": 1000,
+      "sample_percentage": 0.02,
       "tolerance": 1e-1
     }
   },
@@ -44,7 +44,7 @@
     },
     "training_hyperparameters": {
       "loss_name": "CrossEntropy",
-      "epochs": 7,
+      "epochs": 15,
       "compute_training_stats_step": 50000,
       "training_batch_size": 128,
       "predict_batch_size": 2000,
@@ -70,8 +70,8 @@
     },
     "hessian_hyperparameters": {
       "k": 5,
-      "batch_size": 2500,
-      "sample_percentage": 0.1,
+      "batch_size": 1000,
+      "sample_percentage": 0.02,
       "tolerance": 1e-1
     }
   },
@@ -108,8 +108,8 @@
     },
     "hessian_hyperparameters": {
       "k": 5,
-      "batch_size": 2500,
-      "sample_percentage": 0.1,
+      "batch_size": 1000,
+      "sample_percentage": 0.02,
       "tolerance": 1e-1
     }
   },
@@ -146,8 +146,8 @@
     },
     "hessian_hyperparameters": {
       "k": 5,
-      "batch_size": 2500,
-      "sample_percentage": 0.1,
+      "batch_size": 1000,
+      "sample_percentage": 0.02,
       "tolerance": 1e-1
     }
   }
