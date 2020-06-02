@@ -1,94 +1,17 @@
 [
   {
-    "experiment_name": "32_1e-1_converge_and_HK",
+    "experiment_name": "MarCiNN_512_0.1",
     "dataset_hyperparameters": {
-      "dataset_name": "CIFAR10"
+      "dataset_name": "MNIST"
     },
     "training_hyperparameters": {
       "loss_name": "CrossEntropy",
-      "epochs": 15,
-      "compute_training_stats_step": 50000,
-      "training_batch_size": 32,
-      "predict_batch_size": 2000,
-      "random_seed": 777,
-      "target_metric_name": "TRAIN_LOSS",
-      "target_metric_value": 0.1,
-      "save_best_model": true,
-      "save_model": true,
-      "eval_metrics_file_name": "eval_metrics.csv"
-    },
-    "optimiser_hyperparameters": {
-      "optimiser_name": "SGD",
-      "lr": 0.1,
-      "l2_rate": 0
-    },
-    "model_hyperparameters": {
-      "model_name": "SimpleCNN"
-    },
-    "k_matrix_hyperparameters": {
-      "batch_size": 128,
-      "L": 25,
-      "center": true
-    },
-    "hessian_hyperparameters": {
-      "k": 5,
-      "batch_size": 1000,
-      "sample_percentage": 0.02,
-      "tolerance": 1e-1
-    }
-  },
-  {
-    "experiment_name": "128_1e-1_converge_and_HK",
-    "dataset_hyperparameters": {
-      "dataset_name": "CIFAR10"
-    },
-    "training_hyperparameters": {
-      "loss_name": "CrossEntropy",
-      "epochs": 15,
-      "compute_training_stats_step": 50000,
-      "training_batch_size": 128,
-      "predict_batch_size": 2000,
-      "random_seed": 777,
-      "target_metric_name": "TRAIN_LOSS",
-      "target_metric_value": 0.1,
-      "save_best_model": true,
-      "save_model": true,
-      "eval_metrics_file_name": "eval_metrics.csv"
-    },
-    "optimiser_hyperparameters": {
-      "optimiser_name": "SGD",
-      "lr": 0.1,
-      "l2_rate": 0
-    },
-    "model_hyperparameters": {
-      "model_name": "SimpleCNN"
-    },
-    "k_matrix_hyperparameters": {
-      "batch_size": 128,
-      "L": 25,
-      "center": true
-    },
-    "hessian_hyperparameters": {
-      "k": 5,
-      "batch_size": 1000,
-      "sample_percentage": 0.02,
-      "tolerance": 1e-1
-    }
-  },
-  {
-    "experiment_name": "512_1e-1_converge_and_HK",
-    "dataset_hyperparameters": {
-      "dataset_name": "CIFAR10"
-    },
-    "training_hyperparameters": {
-      "loss_name": "CrossEntropy",
-      "epochs": 25,
-      "compute_training_stats_step": 50000,
+      "epochs": 50,
+      "compute_training_stats_step": 1,
       "training_batch_size": 512,
       "predict_batch_size": 2000,
       "random_seed": 777,
       "target_metric_name": "TRAIN_LOSS",
-      "target_metric_value": 0.1,
       "save_best_model": true,
       "save_model": true,
       "eval_metrics_file_name": "eval_metrics.csv"
@@ -99,7 +22,7 @@
       "l2_rate": 0
     },
     "model_hyperparameters": {
-      "model_name": "SimpleCNN"
+      "model_name": "MarCiNN"
     },
     "k_matrix_hyperparameters": {
       "batch_size": 128,
@@ -107,37 +30,36 @@
       "center": true
     },
     "hessian_hyperparameters": {
-      "k": 5,
+      "k": 1,
       "batch_size": 1000,
-      "sample_percentage": 0.02,
+      "sample_percentage": 0.01,
       "tolerance": 1e-1
     }
   },
-  {
-    "experiment_name": "2048_1e-1_converge_and_HK",
+    {
+    "experiment_name": "MarCiNN512_0.0316",
     "dataset_hyperparameters": {
-      "dataset_name": "CIFAR10"
+      "dataset_name": "MNIST"
     },
     "training_hyperparameters": {
       "loss_name": "CrossEntropy",
-      "epochs": 100,
-      "compute_training_stats_step": 50000,
-      "training_batch_size": 2048,
+      "epochs": 50,
+      "compute_training_stats_step": 1,
+      "training_batch_size": 512,
       "predict_batch_size": 2000,
       "random_seed": 777,
       "target_metric_name": "TRAIN_LOSS",
-      "target_metric_value": 0.1,
       "save_best_model": true,
       "save_model": true,
       "eval_metrics_file_name": "eval_metrics.csv"
     },
     "optimiser_hyperparameters": {
       "optimiser_name": "SGD",
-      "lr": 0.1,
+      "lr": 0.0316,
       "l2_rate": 0
     },
     "model_hyperparameters": {
-      "model_name": "SimpleCNN"
+      "model_name": "MarCiNN"
     },
     "k_matrix_hyperparameters": {
       "batch_size": 128,
@@ -145,9 +67,46 @@
       "center": true
     },
     "hessian_hyperparameters": {
-      "k": 5,
+      "k": 1,
       "batch_size": 1000,
-      "sample_percentage": 0.02,
+      "sample_percentage": 0.01,
+      "tolerance": 1e-1
+    }
+  },
+    {
+    "experiment_name": "MarCiNN_512_0.01",
+    "dataset_hyperparameters": {
+      "dataset_name": "MNIST"
+    },
+    "training_hyperparameters": {
+      "loss_name": "CrossEntropy",
+      "epochs": 50,
+      "compute_training_stats_step": 1,
+      "training_batch_size": 512,
+      "predict_batch_size": 2000,
+      "random_seed": 777,
+      "target_metric_name": "TRAIN_LOSS",
+      "save_best_model": true,
+      "save_model": true,
+      "eval_metrics_file_name": "eval_metrics.csv"
+    },
+    "optimiser_hyperparameters": {
+      "optimiser_name": "SGD",
+      "lr": 0.01,
+      "l2_rate": 0
+    },
+    "model_hyperparameters": {
+      "model_name": "MarCiNN"
+    },
+    "k_matrix_hyperparameters": {
+      "batch_size": 128,
+      "L": 25,
+      "center": true
+    },
+    "hessian_hyperparameters": {
+      "k": 1,
+      "batch_size": 1000,
+      "sample_percentage": 0.01,
       "tolerance": 1e-1
     }
   }

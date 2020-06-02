@@ -151,11 +151,13 @@ class RNNTrainingExperimentPyTorch:
     def _evaluate_metrics(self, eval_metrics):
         self._prepare_model_for_testing()
 
-        train_data_loader = self.dataset_generator.get_data_loader(batch_size=self.predict_batch_size, train=True)
-        test_data_loader = self.dataset_generator.get_data_loader(batch_size=self.predict_batch_size, train=False)
+        train_data_loader, _ = self.dataset_generator.get_random_sampled_data_loader(sample_percentage=0.1, batch_size=self.predict_batch_size, train=True)
+        test_data_loader, _ = self.dataset_generator.get_random_sampled_data_loader(sample_percentage=0.1, batch_size=self.predict_batch_size, train=False)
 
         print('Computing train predictions')
         y_train_pred, y_train_true = self._get_all_preds_batchwise(data_loader=train_data_loader)
+        for tag, activ in self.models_factory.model.last_activations.items():
+            eval_metrics['n_Activ_0_Layer_{}'.format(tag)] = (activ == 0).sum().item()
         print('Computing test predictions')
         y_test_pred, y_test_true = self._get_all_preds_batchwise(data_loader=test_data_loader)
 
