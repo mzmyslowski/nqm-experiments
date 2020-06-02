@@ -2,6 +2,7 @@ import os
 import time
 from typing import Optional
 
+import math
 import numpy as np
 import pandas as pd
 import torch
@@ -162,7 +163,6 @@ class RNNTrainingExperimentPyTorch:
             batch_size=self.predict_batch_size,
             train=True
         )
-        print(len(list(train_data_loader)[0][0]))
         test_data_loader, _ = self.dataset_generator.get_random_sampled_data_loader(
             sample_percentage=self.test_predict_sample_fraction,
             batch_size=self.predict_batch_size,
@@ -188,7 +188,7 @@ class RNNTrainingExperimentPyTorch:
         test_loss = self.loss_func(y_test_pred, y_test_true).item()
         eval_metrics['{}_{}'.format(self.TEST_TAG, self.LOSS_TAG)] = test_loss
 
-        if self.k_matrix_factory is not None and not torch.isnan(train_loss):
+        if self.k_matrix_factory is not None and not math.isnan(train_loss):
             print('Computing K')
             k_eigens, mean_gradient = self.k_matrix_factory.compute_eigens(
                 model=self.models_factory.model, criterion=self.loss_func
@@ -197,7 +197,7 @@ class RNNTrainingExperimentPyTorch:
             eval_metrics.update(k_eigens_dict)
             eval_metrics[self.MEAN_GRADIENT_NORM_TAG] = np.linalg.norm(mean_gradient)
 
-        if self.hessian_factory is not None and not torch.isnan(train_loss):
+        if self.hessian_factory is not None and not math.isnan(train_loss):
             print('Computing H')
             h_eigenvalues, h_eigenvectors = self.hessian_factory.compute_eigens(
                 model=self.models_factory.model, criterion=self.loss_func
@@ -207,7 +207,7 @@ class RNNTrainingExperimentPyTorch:
             }
             eval_metrics.update(h_eigens_dict)
 
-        if self.hessian_factory is not None and self.k_matrix_factory is not None and not torch.isnan(train_loss):
+        if self.hessian_factory is not None and self.k_matrix_factory is not None and not math.isnan(train_loss):
             for i in range(1, self.hessian_factory.k + 1):
                 eval_metrics[self.GRADIENT_HESSIAN_OVERLAP_TAG + '_' + str(i)] = self._compute_gradient_hessian_overlap(
                     gradient=mean_gradient,
@@ -300,4 +300,6 @@ class RNNTrainingExperimentPyTorch:
         ) or (
             self.max_loss is not None and
             eval_metrics['{}_{}'.format(self.TRAIN_TAG, self.LOSS_TAG)] > self.max_loss
+        ) or (
+            math.isnan(eval_metrics['{}_{}'.format(self.TRAIN_TAG, self.LOSS_TAG)])
         )
