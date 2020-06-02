@@ -28,9 +28,34 @@ class CIFAR10:
         )
 
 
+class MNIST:
+    DIMENSIONALITY = 28
+    N_CHANNELS = 1
+    N_CLASSES = 10
+
+    NORMALIZATION = ((0.1307,), (0.3081,))
+
+    DEFAULT_MNIST_TRAIN_TRANSFORMS = transforms.Compose(
+        [
+            transforms.ToTensor(),
+            transforms.Normalize(*NORMALIZATION),
+        ]
+    )
+
+    @staticmethod
+    def get_data(train: bool, data_path: str = './data/'):
+        return datasets.MNIST(
+            root=data_path,
+            train=train,
+            download=True,
+            transform=MNIST.DEFAULT_MNIST_TRAIN_TRANSFORMS,
+        )
+
+
 class DatasetGeneratorPyTorch:
     DATASETS = {
-        "CIFAR10": CIFAR10
+        "CIFAR10": CIFAR10,
+        'MNIST': MNIST
     }
 
     def __init__(self, dataset_name: str, data_path: str = './data/'):

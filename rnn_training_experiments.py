@@ -274,6 +274,7 @@ class RNNTrainingExperimentPyTorch:
     def _do_stop_training(self, eval_metrics, epoch):
         return (
                 eval_metrics.get(self.target_metric_name) is not None and
+                self.target_metric_value is not None and
                 eval_metrics[self.target_metric_name] <= self.target_metric_value
         ) or (
                 self.max_epoch_without_improvement is not None and
