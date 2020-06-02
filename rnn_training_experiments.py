@@ -57,9 +57,12 @@ class RNNTrainingExperimentPyTorch:
             target_metric_value: Optional[float] = None,
             target_metric_name: Optional[str] = None,
             max_epoch_without_improvement: Optional[int] = None,
+            max_loss: Optional[float] = None,
             eval_metrics_file_name: str = 'eval_metrics.csv',
             save_model: bool = True,
             save_best_model: bool = True,
+            train_predict_sample_fraction: float = 1,
+            test_predict_sample_fraction: float = 1,
     ):
         self.experiment_path = experiment_path
         self.best_preds_path = os.path.join(experiment_path, self.BEST_PREDS_RELATIVE_PATH)
@@ -81,9 +84,12 @@ class RNNTrainingExperimentPyTorch:
         self.target_metric_value = target_metric_value
         self.target_metric_name = target_metric_name
         self.max_epoch_without_improvement = max_epoch_without_improvement
+        self.max_loss = max_loss
         self.best_epoch = 0
         self.save_model = save_model
         self.save_best_model = save_best_model
+        self.train_predict_sample_fraction = train_predict_sample_fraction
+        self.test_predict_sample_fraction = test_predict_sample_fraction
 
     def run(self):
         self.dataset_generator.init_dataset()
@@ -151,8 +157,17 @@ class RNNTrainingExperimentPyTorch:
     def _evaluate_metrics(self, eval_metrics):
         self._prepare_model_for_testing()
 
-        train_data_loader = self.dataset_generator.get_data_loader(batch_size=self.predict_batch_size, train=True)
-        test_data_loader = self.dataset_generator.get_data_loader(batch_size=self.predict_batch_size, train=False)
+        train_data_loader, _ = self.dataset_generator.get_random_sampled_data_loader(
+            sample_percentage=self.train_predict_sample_fraction,
+            batch_size=self.predict_batch_size,
+            train=True
+        )
+        print(len(list(train_data_loader)[0][0]))
+        test_data_loader, _ = self.dataset_generator.get_random_sampled_data_loader(
+            sample_percentage=self.test_predict_sample_fraction,
+            batch_size=self.predict_batch_size,
+            train=False
+        )
 
         print('Computing train predictions')
         y_train_pred, y_train_true = self._get_all_preds_batchwise(data_loader=train_data_loader)
@@ -167,11 +182,13 @@ class RNNTrainingExperimentPyTorch:
         }
 
         print('Computing train loss')
-        eval_metrics['{}_{}'.format(self.TRAIN_TAG, self.LOSS_TAG)] = self.loss_func(y_train_pred, y_train_true).item()
+        train_loss = self.loss_func(y_train_pred, y_train_true).item()
+        eval_metrics['{}_{}'.format(self.TRAIN_TAG, self.LOSS_TAG)] = train_loss
         print('Computing test loss')
-        eval_metrics['{}_{}'.format(self.TEST_TAG, self.LOSS_TAG)] = self.loss_func(y_test_pred, y_test_true).item()
+        test_loss = self.loss_func(y_test_pred, y_test_true).item()
+        eval_metrics['{}_{}'.format(self.TEST_TAG, self.LOSS_TAG)] = test_loss
 
-        if self.k_matrix_factory is not None:
+        if self.k_matrix_factory is not None and not torch.isnan(train_loss):
             print('Computing K')
             k_eigens, mean_gradient = self.k_matrix_factory.compute_eigens(
                 model=self.models_factory.model, criterion=self.loss_func
@@ -180,7 +197,7 @@ class RNNTrainingExperimentPyTorch:
             eval_metrics.update(k_eigens_dict)
             eval_metrics[self.MEAN_GRADIENT_NORM_TAG] = np.linalg.norm(mean_gradient)
 
-        if self.hessian_factory is not None:
+        if self.hessian_factory is not None and not torch.isnan(train_loss):
             print('Computing H')
             h_eigenvalues, h_eigenvectors = self.hessian_factory.compute_eigens(
                 model=self.models_factory.model, criterion=self.loss_func
@@ -190,7 +207,7 @@ class RNNTrainingExperimentPyTorch:
             }
             eval_metrics.update(h_eigens_dict)
 
-        if self.hessian_factory is not None and self.k_matrix_factory is not None:
+        if self.hessian_factory is not None and self.k_matrix_factory is not None and not torch.isnan(train_loss):
             for i in range(1, self.hessian_factory.k + 1):
                 eval_metrics[self.GRADIENT_HESSIAN_OVERLAP_TAG + '_' + str(i)] = self._compute_gradient_hessian_overlap(
                     gradient=mean_gradient,
@@ -280,4 +297,7 @@ class RNNTrainingExperimentPyTorch:
                 self.max_epoch_without_improvement is not None and
                 self.target_metric_name is not None and
                 self.max_epoch_without_improvement <= epoch - self.best_epoch
+        ) or (
+            self.max_loss is not None and
+            eval_metrics['{}_{}'.format(self.TRAIN_TAG, self.LOSS_TAG)] > self.max_loss
         )
