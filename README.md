@@ -3,14 +3,11 @@ This repo contains the source code for the experiments conducted for my [bachelo
 
 ## Table of Contents
 - [Introduction](#introduction)
-- [Features](#features)
 - [Requirements](#requirements)
 - [Installation](#installation)
 - [Usage](#usage)
-- [Configuration](#configuration)
 - [Experiment Results](#experiment-results)
 - [Acknowledgments](#acknowledgments)
-- [Citation](#citation)
 ## Introduction
 The empirical risk function of a neural network is usually a highly non-convex function. Therefore, it is hard to obtain theoretical results about its optimisation that are meaningful
 to practitioners without making strong assumptions. Although, it is not clear how such assumption should be made. In the bachelor's thesis, we suggest to base these assumptions on the
