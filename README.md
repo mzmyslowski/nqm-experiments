@@ -40,13 +40,15 @@ The code in this repo computes the following metrics at each iteration of traini
 pip install -r requirements.txt
 ```
 ## Usage
-TODO
-## Configuration
-TODO
+1. configure the experiments in `experiments_factory.json`. If you don't do it, an example will be used. Possible values can be found in the respective files in this repo (e.g. available models can be found in the `models_factory.py`.
+2. Run the configured experiements:
+```
+python experiments_factory.py
+```
+3. Select a path where the experiment results should be saved.
+4. After each iteration is finished the results are saved in the folder named by the experiment. 
 ## Experiment Results
 [Quick video explainer of the main experiment results](https://www.youtube.com/watch?v=akB7jqVcsQU)
 ## Acknowledgments
 Huge thanks to my supervisor [dr Stanisław Jastrzębski](https://sjastrzebski.com/) from New York University for patience and suggesting many exciting ideas and research papers that were used as basis for this bachelor's thesis.
-## Citation
-TODO
 
